@@ -1,0 +1,14 @@
+package com.ayush.grievance.smart_grievance_system;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import com.grievance.SmartGrievanceApplication;
+
+@SpringBootTest(classes = SmartGrievanceApplication.class)
+class SmartGrievanceSystemApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}

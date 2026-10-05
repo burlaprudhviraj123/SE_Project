@@ -1,0 +1,64 @@
+# IDE Configuration
+.idea/
+.vscode/
+.freebuff/
+/[Pp][Rr][Oo][Jj][Ee][Cc][Tt]_[Rr][Ee][Vv][Ii][Ee][Ww].[Mm][Dd]
+*.iml
+*.iws
+*.ipr
+*.swp
+*.swo
+*~
+
+# Build Output
+target/
+out/
+build/
+*.class
+*.jar
+*.war
+*.zip
+
+# Maven
+.m2/
+dependency-reduced-pom.xml
+
+# Gradle
+.gradle/
+gradle/
+
+# Spring Boot
+application-local.properties
+application-dev.properties
+application-prod.properties
+
+# Database
+*.db
+*.sqlite
+*.h2.db
+
+# File Uploads
+Backend/uploads/*
+!Backend/uploads/.gitkeep
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backup
+*.bak
+*.tmp
+
+# Node (if using frontend build tools)
+node_modules/
+package-lock.json
+npm-debug.log

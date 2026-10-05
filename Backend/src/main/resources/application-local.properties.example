@@ -1,0 +1,6 @@
+# Local development database credentials
+# Copy this file to application-local.properties (which is gitignored)
+# and fill in your actual values.
+
+DB_PASSWORD=
+JWT_SECRET_KEY=replace_with_a_random_64plus_char_string_generated_by_openssl

@@ -1,0 +1,132 @@
+package com.grievance.repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import com.grievance.entity.Grievance;
+import com.grievance.entity.User;
+import com.grievance.enums.GrievanceStatus;
+import com.grievance.enums.Priority;
+
+import jakarta.persistence.LockModeType;
+
+/**
+ * Repository for Grievance entity.
+ * Provides database access methods for grievance management and officer workflows.
+ */
+@Repository
+public interface GrievanceRepository extends JpaRepository<Grievance, Long> {
+
+    Page<Grievance> findByPublishedTrueOrderByCreatedAtDesc(Pageable pageable);
+
+    Optional<Grievance> findByPublicIdAndPublishedTrue(String publicId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT grievance FROM Grievance grievance WHERE grievance.id = :id")
+    Optional<Grievance> findByIdForClaim(@Param("id") Long id);
+
+    // Find by grievance number
+    Optional<Grievance> findByGrievanceNumber(String grievanceNumber);
+
+    // Find all grievances by citizen
+    List<Grievance> findByCitizenOrderByCreatedAtDesc(User citizen);
+
+    // Find all grievances assigned to an officer
+    List<Grievance> findByAssignedOfficerOrderByCreatedAtDesc(User officer);
+
+    // Find all grievances by status
+    List<Grievance> findByStatus(GrievanceStatus status);
+
+    // Find all grievances by department
+    List<Grievance> findByDepartment_IdOrderByCreatedAtDesc(Long departmentId);
+
+    // ================= OFFICER PORTAL SPECIFIC QUERIES =================
+
+    // Department Queue: Unassigned tickets in department pool
+    @Query("SELECT g FROM Grievance g WHERE g.department.id = :deptId AND g.assignedOfficer IS NULL AND g.status NOT IN ('RESOLVED', 'REJECTED', 'CLOSED_BY_USER') ORDER BY g.priority DESC, g.createdAt ASC")
+    List<Grievance> findDeptPoolGrievances(@Param("deptId") Long deptId);
+
+    // Active Workload: Tickets assigned to the officer currently being processed
+    @Query("SELECT g FROM Grievance g WHERE g.assignedOfficer.id = :officerId AND g.status NOT IN ('RESOLVED', 'REJECTED', 'CLOSED_BY_USER') ORDER BY g.createdAt DESC")
+    List<Grievance> findActiveGrievancesByOfficer(@Param("officerId") Long officerId);
+
+    // Resolved History: Tickets resolved/rejected by this officer
+    @Query("SELECT g FROM Grievance g WHERE g.assignedOfficer.id = :officerId AND g.status IN ('RESOLVED', 'REJECTED') ORDER BY g.updatedAt DESC")
+    List<Grievance> findResolvedGrievancesByOfficer(@Param("officerId") Long officerId);
+
+    // Resolved History: All tickets resolved/rejected in this department
+    @Query("SELECT g FROM Grievance g WHERE g.department.id = :deptId AND g.status IN ('RESOLVED', 'REJECTED') ORDER BY g.updatedAt DESC")
+    List<Grievance> findResolvedGrievancesByDepartment(@Param("deptId") Long deptId);
+
+    // Counts for Officer KPI cards
+    @Query("SELECT COUNT(g) FROM Grievance g WHERE g.department.id = :deptId AND g.assignedOfficer IS NULL AND g.status NOT IN ('RESOLVED', 'REJECTED', 'CLOSED_BY_USER')")
+    long countUnassignedByDepartment(@Param("deptId") Long deptId);
+
+    @Query("SELECT COUNT(g) FROM Grievance g WHERE g.assignedOfficer.id = :officerId AND g.status = 'IN_PROGRESS'")
+    long countActiveTasksByOfficer(@Param("officerId") Long officerId);
+
+    @Query("SELECT COUNT(g) FROM Grievance g WHERE g.assignedOfficer.id = :officerId AND g.status IN ('RESOLVED', 'REJECTED')")
+    long countResolvedByOfficer(@Param("officerId") Long officerId);
+
+    // ================= GENERAL QUERIES =================
+
+    // Find pending grievances (not assigned)
+    @Query("SELECT g FROM Grievance g WHERE g.status = 'PENDING' AND g.assignedOfficer IS NULL ORDER BY g.priority DESC, g.createdAt ASC")
+    List<Grievance> findPendingGrievances();
+
+    // Count grievances by status
+    long countByStatus(GrievanceStatus status);
+
+    // Count grievances by citizen
+    long countByCitizen(User citizen);
+
+    // Find grievances by status and priority
+    @Query("SELECT g FROM Grievance g WHERE g.status = :status AND g.priority = :priority ORDER BY g.createdAt DESC")
+    List<Grievance> findByStatusAndPriority(@Param("status") GrievanceStatus status, @Param("priority") Priority priority);
+
+    // Find grievances created within a date range
+    @Query("SELECT g FROM Grievance g WHERE g.createdAt >= :startDate AND g.createdAt <= :endDate ORDER BY g.createdAt DESC")
+    List<Grievance> findByDateRange(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    // Find resolved grievances for a citizen
+    @Query("SELECT g FROM Grievance g WHERE g.citizen = :citizen AND (g.status = 'RESOLVED' OR g.status = 'REJECTED') ORDER BY g.updatedAt DESC")
+    List<Grievance> findResolvedGrievancesByCitizen(@Param("citizen") User citizen);
+
+    // Count grievances by department
+    long countByDepartment_Id(Long departmentId);
+
+    // Find resolved/rejected grievances by department for resolution time calculation
+    List<Grievance> findByDepartment_IdAndStatusIn(Long departmentId, List<GrievanceStatus> statuses);
+
+    // Find top 3 recent grievances for a citizen with a specific status
+    List<Grievance> findTop3ByCitizenAndStatusOrderByCreatedAtDesc(User citizen, GrievanceStatus status);
+
+    // Find top N recent grievances for a citizen
+    List<Grievance> findTop5ByCitizenOrderByCreatedAtDesc(User citizen);
+
+    // Find all grievances ordered by creation date
+    Page<Grievance> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    // ================= ADMIN DASHBOARD QUERIES =================
+
+    // Non-terminal grievances (for SLA breach computation across all departments)
+    @Query("SELECT g FROM Grievance g WHERE g.status NOT IN ('RESOLVED', 'REJECTED', 'CLOSED_BY_USER')")
+    List<Grievance> findNonTerminalGrievances();
+
+    // Active (non-terminal) grievance count per department (for Department Workload chart)
+    @Query("SELECT COUNT(g) FROM Grievance g WHERE g.department.id = :deptId AND g.status NOT IN ('RESOLVED', 'REJECTED', 'CLOSED_BY_USER')")
+    long countNonTerminalByDepartment(@Param("deptId") Long deptId);
+
+    // Resolved/rejected grievances within a date range (for resolution trend chart)
+    @Query("SELECT g FROM Grievance g WHERE g.status IN ('RESOLVED', 'REJECTED') AND g.updatedAt >= :startDate AND g.updatedAt <= :endDate")
+    List<Grievance> findResolvedByDateRange(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+}

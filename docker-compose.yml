@@ -1,0 +1,72 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: smart-grievance-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: smart_grievance_db
+      POSTGRES_USER: grievance_user
+      POSTGRES_PASSWORD: grievance_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U grievance_user -d smart_grievance_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: smart-grievance-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: smart_grievance_db
+      DB_USERNAME: grievance_user
+      DB_PASSWORD: grievance_pass
+      SPRING_PROFILES_ACTIVE: dev
+      JWT_SECRET_KEY: dGhpc2lzYXZlcnlzZWNyZXRrZXlmb3JzbWFydGdpZXZhbmNlc3lzdGVtdGVzdGluZ3B1cnBvc2Vzb25seTEyMzQ1Ng==
+      SERVER_PORT: 8081
+      UPLOAD_DIR: /app/uploads/
+      ALLOWED_EMAIL_DOMAINS: anits.edu.in
+    ports:
+      - "8081:8081"
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: smart-grievance-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+      - "3000:80"
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
