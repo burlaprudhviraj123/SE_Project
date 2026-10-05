@@ -188,10 +188,10 @@ const RegisterPage = () => {
               {/* Username & College Email */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="username" className="text-xs font-semibold text-ink">Student ID / Username *</Label>
+                  <Label htmlFor="username" className="text-xs font-semibold text-ink">Student Roll Number (ID) *</Label>
                   <Input 
                     id="username" 
-                    placeholder="e.g. 21b91a0501" 
+                    placeholder="e.g. A24126510123" 
                     value={formData.username}
                     onChange={handleChange}
                     className="h-11 px-4 rounded-xl text-sm border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10"

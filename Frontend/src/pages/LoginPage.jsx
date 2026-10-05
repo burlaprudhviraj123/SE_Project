@@ -134,10 +134,10 @@ const LoginPage = () => {
           {!showForgot ? (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <Label htmlFor="username" className="text-xs font-semibold text-ink">Username or College Email</Label>
+                <Label htmlFor="username" className="text-xs font-semibold text-ink">Roll Number or College Email</Label>
                 <Input 
                   id="username" 
-                  placeholder="e.g. 21b91a0501 or user@anits.edu.in" 
+                  placeholder="e.g. A24126510123 or user@anits.edu.in" 
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="h-11 px-4 rounded-xl text-sm border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10"
