@@ -22,7 +22,7 @@ services:
 
   backend:
     build:
-      context: ./Backend
+      context: ./backend
       dockerfile: Dockerfile
     container_name: smart-grievance-backend
     restart: unless-stopped
@@ -30,16 +30,16 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_NAME: smart_grievance_db
-      DB_USERNAME: grievance_user
-      DB_PASSWORD: grievance_pass
-      SPRING_PROFILES_ACTIVE: dev
-      JWT_SECRET_KEY: dGhpc2lzYXZlcnlzZWNyZXRrZXlmb3JzbWFydGdpZXZhbmNlc3lzdGVtdGVzdGluZ3B1cnBvc2Vzb25seTEyMzQ1Ng==
-      SERVER_PORT: 8081
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-smart_grievance_db}
+      DB_USERNAME: ${DB_USERNAME:-grievance_user}
+      DB_PASSWORD: ${DB_PASSWORD:-grievance_pass}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-dGhpc2lzYXZlcnlzZWNyZXRrZXlmb3JzbWFydGdpZXZhbmNlc3lzdGVtdGVzdGluZ3B1cnBvc2Vzb25seTEyMzQ1Ng==}
+      SERVER_PORT: ${SERVER_PORT:-8081}
       UPLOAD_DIR: /app/uploads/
-      ALLOWED_EMAIL_DOMAINS: anits.edu.in
+      ALLOWED_EMAIL_DOMAINS: ${ALLOWED_EMAIL_DOMAINS:-anits.edu.in}
     ports:
       - "8081:8081"
     volumes:
@@ -49,7 +49,7 @@ services:
 
   frontend:
     build:
-      context: ./Frontend
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: smart-grievance-frontend
     restart: unless-stopped

@@ -161,7 +161,7 @@ docker compose up --build -d
 
 ### Backend (Spring Boot 3)
 ```bash
-cd Backend
+cd backend
 ./mvnw clean compile
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
@@ -170,7 +170,7 @@ cd Backend
 
 ### Frontend (React 19 + Vite)
 ```bash
-cd Frontend
+cd frontend
 npm install
 npm run dev
 ```
@@ -234,7 +234,7 @@ Base URL: `http://localhost:8081` — full interactive OpenAPI documentation ava
 
 ```text
 ResolveDesk-Smart-Grievance-System/
-├── Backend/
+├── backend/
 │   ├── src/main/java/com/grievance/
 │   │   ├── config/          # Security, DataInitializer, CORS & FileStorage config
 │   │   ├── controller/      # REST Controllers (Auth, Grievance, Officer, Admin, User)
@@ -249,7 +249,7 @@ ResolveDesk-Smart-Grievance-System/
 │   ├── pom.xml              # Maven dependencies & build definitions
 │   └── Dockerfile           # Backend containerization (Java 17 Temurin)
 │
-├── Frontend/
+├── frontend/
 │   ├── src/
 │   │   ├── components/      # UI primitives, Admin dialogs, Navbar, Footer
 │   │   ├── lib/             # Axios API client, privacy helpers & utilities

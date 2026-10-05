@@ -33,20 +33,20 @@ application-local.properties
 application-dev.properties
 application-prod.properties
 application-secret.properties
-Backend/src/main/resources/application-local.properties
-Backend/src/main/resources/application-dev.properties
-Backend/src/main/resources/application-prod.properties
-Backend/src/main/resources/application-secret.properties
+backend/src/main/resources/application-local.properties
+backend/src/main/resources/application-dev.properties
+backend/src/main/resources/application-prod.properties
+backend/src/main/resources/application-secret.properties
 
 # ------------------------------------------------------------
 # Build Outputs
 # ------------------------------------------------------------
 target/
-Backend/target/
+backend/target/
 out/
 build/
 dist/
-Frontend/dist/
+frontend/dist/
 dist-ssr/
 *.class
 *.jar
@@ -58,7 +58,7 @@ dist-ssr/
 # Dependencies & Package Managers
 # ------------------------------------------------------------
 node_modules/
-Frontend/node_modules/
+frontend/node_modules/
 .m2/
 dependency-reduced-pom.xml
 .gradle/
@@ -79,11 +79,11 @@ postgres_data/
 # ------------------------------------------------------------
 # File Uploads & Runtime Logs
 # ------------------------------------------------------------
-Backend/uploads/*
-!Backend/uploads/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
 uploads/*
 logs/
-Backend/logs/
+backend/logs/
 *.log
 *.log.*
 
