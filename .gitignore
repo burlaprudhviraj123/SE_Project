@@ -1,8 +1,102 @@
-# IDE Configuration
+# ============================================================
+# ResolveDesk — ANITS Campus Grievance System .gitignore
+# ============================================================
+
+# ------------------------------------------------------------
+# Environment Variables & Secrets (CRITICAL - NEVER COMMIT)
+# ------------------------------------------------------------
+.env
+.env.*
+*.env
+!.env.example
+*.pem
+*.key
+*.pkcs12
+*.p12
+*.pfx
+*.crt
+*.der
+id_rsa*
+id_ed25519*
+*.keystore
+*.jks
+credentials.json
+service-account*.json
+secrets.*
+*.secret
+oauth-client-*.json
+
+# ------------------------------------------------------------
+# Spring Boot / Backend Configs
+# ------------------------------------------------------------
+application-local.properties
+application-dev.properties
+application-prod.properties
+application-secret.properties
+Backend/src/main/resources/application-local.properties
+Backend/src/main/resources/application-dev.properties
+Backend/src/main/resources/application-prod.properties
+Backend/src/main/resources/application-secret.properties
+
+# ------------------------------------------------------------
+# Build Outputs
+# ------------------------------------------------------------
+target/
+Backend/target/
+out/
+build/
+dist/
+Frontend/dist/
+dist-ssr/
+*.class
+*.jar
+*.war
+*.zip
+*.tar.gz
+
+# ------------------------------------------------------------
+# Dependencies & Package Managers
+# ------------------------------------------------------------
+node_modules/
+Frontend/node_modules/
+.m2/
+dependency-reduced-pom.xml
+.gradle/
+gradle/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ------------------------------------------------------------
+# Database & Runtime Data
+# ------------------------------------------------------------
+*.db
+*.sqlite
+*.h2.db
+postgres_data/
+
+# ------------------------------------------------------------
+# File Uploads & Runtime Logs
+# ------------------------------------------------------------
+Backend/uploads/*
+!Backend/uploads/.gitkeep
+uploads/*
+logs/
+Backend/logs/
+*.log
+*.log.*
+
+# ------------------------------------------------------------
+# IDE & AI Assistant Tool Folders
+# ------------------------------------------------------------
 .idea/
 .vscode/
 .freebuff/
-/[Pp][Rr][Oo][Jj][Ee][Cc][Tt]_[Rr][Ee][Vv][Ii][Ee][Ww].[Mm][Dd]
+.agent/
+.claude/
+.cursor/
+.gemini/
 *.iml
 *.iws
 *.ipr
@@ -10,55 +104,21 @@
 *.swo
 *~
 
-# Build Output
-target/
-out/
-build/
-*.class
-*.jar
-*.war
-*.zip
-
-# Maven
-.m2/
-dependency-reduced-pom.xml
-
-# Gradle
-.gradle/
-gradle/
-
-# Spring Boot
-application-local.properties
-application-dev.properties
-application-prod.properties
-
-# Database
-*.db
-*.sqlite
-*.h2.db
-
-# File Uploads
-Backend/uploads/*
-!Backend/uploads/.gitkeep
-
-# Logs
-logs/
-*.log
-*.log.*
-
-# Environment
-.env
-.env.local
-
-# OS
+# ------------------------------------------------------------
+# Operating System Files
+# ------------------------------------------------------------
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Backup
+# ------------------------------------------------------------
+# Backup & Scratch Files
+# ------------------------------------------------------------
 *.bak
 *.tmp
-
-# Node (if using frontend build tools)
-node_modules/
-package-lock.json
-npm-debug.log
+*.temp
+scratch/

@@ -7,3 +7,8 @@ logs/
 uploads/
 .git/
 .gitignore
+.env*
+application-*.properties
+!application.properties
+*.pem
+*.key
