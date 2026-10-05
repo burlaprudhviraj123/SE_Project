@@ -69,7 +69,7 @@ const Navbar = () => {
       <div className="container flex h-16 max-w-7xl mx-auto items-center justify-between px-4 sm:px-6">
         {/* Left: Branding */}
         <div className="flex items-center gap-3 md:gap-8">
-          <Link to="/dashboard" className="flex items-center gap-2.5 group">
+          <Link to="/dashboard" viewTransition className="flex items-center gap-2.5 group">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#2B5D4F] text-[#FAF9F6] shadow-sm transition-all group-hover:scale-105 group-hover:bg-[#234A3F]">
                <ShieldAlert className="h-5 w-5" />
             </div>
@@ -87,6 +87,7 @@ const Navbar = () => {
               <Link 
                 key={link.path} 
                 to={link.path}
+                viewTransition
                 className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-medium transition-all ${
                   isActive(link.path) 
                   ? 'text-[#2B5D4F] dark:text-[#7EB5A6] bg-[#2B5D4F]/10 border border-[#2B5D4F]/20' 
@@ -186,6 +187,7 @@ const Navbar = () => {
               <Link 
                 key={link.path} 
                 to={link.path}
+                viewTransition
                 className={`flex items-center gap-3 px-4 py-2.5 rounded-2xl text-xs font-mono font-medium transition-all ${
                   isActive(link.path) 
                   ? 'text-[#2B5D4F] dark:text-[#7EB5A6] bg-[#2B5D4F]/10 border border-[#2B5D4F]/20' 

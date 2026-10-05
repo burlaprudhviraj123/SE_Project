@@ -11,7 +11,9 @@ const MainLayout = () => {
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary/30">
       <Navbar />
       <main className="flex-1 w-full">
-        <Outlet />
+        <div key={location.pathname} className="page-enter-animation">
+          <Outlet />
+        </div>
       </main>
       {!hideFooter && <Footer />}
       <Toaster position="top-right" richColors theme="system" closeButton />
