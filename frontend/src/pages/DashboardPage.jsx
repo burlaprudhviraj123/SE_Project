@@ -119,7 +119,7 @@ const DashboardPage = () => {
         setLoading(true);
         if (isAdmin) {
           const [statsRes, grievancesRes, officersRes] = await Promise.all([
-            api.get('/admin/dashboard/stats'),
+            api.get('/dashboard/admin'),
             api.get('/grievances?page=0&size=50'),
             api.get('/grievances/officers')
           ]);
