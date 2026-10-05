@@ -23,17 +23,17 @@ export default {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
         ink: {
-          DEFAULT: '#1C2024',
-          muted: '#5A6065',
-          faint: '#8C9298',
+          DEFAULT: 'var(--ink, #1C2024)',
+          muted: 'var(--ink-muted, #5A6065)',
+          faint: 'var(--ink-faint, #8C9298)',
         },
         paper: {
-          DEFAULT: '#FAF9F6',
+          DEFAULT: 'var(--paper, #FAF9F6)',
           light: '#FFFFFF',
-          dark: '#F2EFEB',
+          dark: '#121517',
         },
         line: {
-          DEFAULT: '#E4E0D8',
+          DEFAULT: 'var(--line, #E4E0D8)',
           subtle: '#EDEAE4',
         },
         surface: {

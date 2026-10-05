@@ -173,7 +173,7 @@ const NewGrievancePage = () => {
               <CheckCircle2 className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xs font-mono uppercase tracking-wider text-muted">Institutional Receipt</span>
+              <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Institutional Receipt</span>
               <h1 className="text-2xl font-serif font-bold text-ink">Grievance Lodged Successfully</h1>
             </div>
           </div>
@@ -185,20 +185,20 @@ const NewGrievancePage = () => {
 
             <div className="p-5 bg-paper border border-line rounded-2xl space-y-2.5">
               <div className="flex justify-between items-center text-xs">
-                <span className="text-muted font-sans">Reference Token:</span>
+                <span className="text-muted-foreground font-sans">Reference Token:</span>
                 <span className="font-mono font-bold text-ink bg-surface px-2.5 py-1 rounded-md border border-line">
                   {submittedGrievance.ticketNumber || `GRV-#${submittedGrievance.id}`}
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs">
-                <span className="text-muted font-sans">Current Status:</span>
+                <span className="text-muted-foreground font-sans">Current Status:</span>
                 <div className="flex items-center gap-1.5 font-medium text-ink bg-surface px-2.5 py-1 rounded-full border border-line">
                   <span className="w-2 h-2 rounded-full bg-[#B8862E]" />
                   <span>Pending Department Review</span>
                 </div>
               </div>
               <div className="flex justify-between items-center text-xs">
-                <span className="text-muted font-sans">Subject:</span>
+                <span className="text-muted-foreground font-sans">Subject:</span>
                 <span className="font-sans font-medium text-ink truncate max-w-[260px]">
                   {submittedGrievance.title}
                 </span>
@@ -279,7 +279,7 @@ const NewGrievancePage = () => {
               maxLength={150}
               required
             />
-            <p className="text-[11px] text-muted">
+            <p className="text-[11px] text-muted-foreground">
               Summarize the nature of the issue concisely (5 to 150 characters).
             </p>
           </div>
@@ -308,7 +308,7 @@ const NewGrievancePage = () => {
                   ))}
                 </SelectContent>
               </Select>
-              <p className="text-[11px] text-muted">
+              <p className="text-[11px] text-muted-foreground">
                 Select the campus administrative or academic unit.
               </p>
             </div>
@@ -347,7 +347,7 @@ const NewGrievancePage = () => {
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-[11px] text-muted">
+              <p className="text-[11px] text-muted-foreground">
                 Classify based on campus safety or academic deadlines.
               </p>
             </div>
@@ -359,7 +359,7 @@ const NewGrievancePage = () => {
               <Label htmlFor="description" className="text-xs font-sans font-semibold text-ink">
                 Detailed Statement of Grievance <span className="text-status-rejected">*</span>
               </Label>
-              <span className="text-[11px] font-mono text-muted">
+              <span className="text-[11px] font-mono text-muted-foreground">
                 {formData.description.length} / 5000 characters
               </span>
             </div>
@@ -372,7 +372,7 @@ const NewGrievancePage = () => {
               className="w-full p-4 rounded-2xl border border-line bg-paper text-ink text-sm font-sans focus:border-accent focus:ring-2 focus:ring-accent/10 focus:outline-none leading-relaxed resize-y min-h-[140px]"
               required
             />
-            <p className="text-[11px] text-muted">
+            <p className="text-[11px] text-muted-foreground">
               Provide sufficient factual context to allow the nodal officer to investigate promptly without unnecessary back-and-forth.
             </p>
           </div>
@@ -390,7 +390,7 @@ const NewGrievancePage = () => {
                   className={`px-3 py-1 font-medium text-xs transition-colors rounded-lg ${
                     evidenceType === 'upload'
                       ? 'bg-surface text-ink font-semibold shadow-xs'
-                      : 'text-muted hover:text-ink'
+                      : 'text-muted-foreground hover:text-ink'
                   }`}
                 >
                   File Upload
@@ -401,7 +401,7 @@ const NewGrievancePage = () => {
                   className={`px-3 py-1 font-medium text-xs transition-colors rounded-lg ${
                     evidenceType === 'link'
                       ? 'bg-surface text-ink font-semibold shadow-xs'
-                      : 'text-muted hover:text-ink'
+                      : 'text-muted-foreground hover:text-ink'
                   }`}
                 >
                   External URL
@@ -421,7 +421,7 @@ const NewGrievancePage = () => {
                       )}
                       <div className="text-left truncate">
                         <p className="text-xs font-semibold text-ink truncate">{file.name}</p>
-                        <p className="text-[10px] font-mono text-muted">{(file.size / 1024).toFixed(1)} KB</p>
+                        <p className="text-[10px] font-mono text-muted-foreground">{(file.size / 1024).toFixed(1)} KB</p>
                       </div>
                     </div>
                     <Button
@@ -436,11 +436,11 @@ const NewGrievancePage = () => {
                   </div>
                 ) : (
                   <label className="cursor-pointer block py-4">
-                    <Upload className="w-7 h-7 text-muted mx-auto mb-2" />
+                    <Upload className="w-7 h-7 text-muted-foreground mx-auto mb-2" />
                     <span className="text-xs font-medium text-accent hover:underline">
                       Click to choose a document or image
                     </span>
-                    <span className="text-xs text-muted block mt-1">
+                    <span className="text-xs text-muted-foreground block mt-1">
                       PDF, PNG, JPG up to 5MB
                     </span>
                     <input
@@ -454,7 +454,7 @@ const NewGrievancePage = () => {
               </div>
             ) : (
               <div className="p-5 border border-line bg-paper rounded-2xl space-y-3">
-                <div className="flex items-center gap-2 text-xs text-muted">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <LinkIcon className="w-4 h-4 text-accent" />
                   <span>Publicly accessible document link (Google Drive, OneDrive, campus server)</span>
                 </div>
@@ -471,7 +471,7 @@ const NewGrievancePage = () => {
 
           {/* Submit Action */}
           <div className="pt-4 border-t border-line flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-muted">
+            <p className="text-xs text-muted-foreground">
               By lodging this complaint, you affirm that the information submitted is factual and related to ANITS campus operations.
             </p>
             <Button

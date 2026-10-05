@@ -68,18 +68,18 @@ const AdminGrievancesPage = () => {
   }, [page, reload]);
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] dark:bg-[#121517] text-[#1C2024] dark:text-[#FAF9F6] pb-24 transition-colors">
+    <div className="min-h-screen bg-paper text-ink pb-24 transition-colors">
       <div className="container max-w-6xl mx-auto px-4 sm:px-6 pt-10 space-y-8">
         
         {/* Header Banner */}
-        <header className="border-b border-[#E4E0D8] dark:border-[#2A2E33] pb-6 space-y-3">
+        <header className="border-b border-line pb-6 space-y-3">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium border border-[#2B5D4F]/30 bg-[#2B5D4F]/10 text-[#2B5D4F] dark:text-[#7EB5A6]">
               <ShieldAlert className="h-3.5 w-3.5" /> Institutional Archive · Administrative Console
             </span>
           </div>
           <div>
-            <h1 className="text-3xl font-serif font-bold text-[#1C2024] dark:text-[#FAF9F6] tracking-tight">
+            <h1 className="text-3xl font-serif font-bold text-ink tracking-tight">
               All Campus Grievances
             </h1>
             <p className="text-sm text-muted-foreground mt-1 font-sans">
@@ -94,23 +94,23 @@ const AdminGrievancesPage = () => {
             <p className="font-mono text-xs">Querying campus repository...</p>
           </div>
         ) : error ? (
-          <div role="alert" className="py-16 text-center space-y-4 border border-[#E4E0D8] dark:border-[#2A2E33] bg-card rounded-xl p-8">
+          <div role="alert" className="py-16 text-center space-y-4 border border-line bg-surface rounded-xl p-8">
             <p className="text-sm font-medium text-destructive">{error}</p>
-            <Button variant="outline" onClick={() => setReload(previous => previous + 1)} className="border-[#E4E0D8] dark:border-[#2A2E33]">
+            <Button variant="outline" onClick={() => setReload(previous => previous + 1)} className="border-line bg-surface text-ink hover:bg-paper">
               <RefreshCw className="h-4 w-4 mr-2" /> Retry Fetch
             </Button>
           </div>
         ) : result.content.length === 0 ? (
-          <div role="status" className="py-16 text-center border border-[#E4E0D8] dark:border-[#2A2E33] bg-card rounded-xl p-8 space-y-2">
-            <p className="font-serif text-lg font-bold">No Records Found</p>
+          <div role="status" className="py-16 text-center border border-line bg-surface rounded-xl p-8 space-y-2">
+            <p className="font-serif text-lg font-bold text-ink">No Records Found</p>
             <p className="text-xs text-muted-foreground">No campus grievances match the current administrative scope.</p>
           </div>
         ) : (
-          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-xl overflow-hidden shadow-sm">
+          <div className="border border-line bg-surface rounded-xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[760px] table-fixed text-sm text-left">
                 <caption className="sr-only">All private cases, including unpublished cases</caption>
-                <thead className="bg-[#F4F1EA] dark:bg-[#202428] border-b border-[#E4E0D8] dark:border-[#2A2E33] text-xs font-mono uppercase text-muted-foreground">
+                <thead className="bg-paper border-b border-line text-xs font-mono uppercase text-muted-foreground">
                   <tr>
                     <th scope="col" className="w-[36%] px-4 py-3.5 font-medium">Case & Title</th>
                     <th scope="col" className="w-[16%] px-4 py-3.5 font-medium">Status</th>
@@ -119,13 +119,13 @@ const AdminGrievancesPage = () => {
                     <th scope="col" className="w-[15%] px-4 py-3.5 font-medium text-right">Visibility</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E4E0D8] dark:divide-[#2A2E33]">
+                <tbody className="divide-y divide-line">
                   {result.content.map(grievance => {
                     const st = getStatusDot(grievance.status);
                     return (
-                      <tr key={grievance.id} className="hover:bg-[#FAF9F6]/60 dark:hover:bg-[#22262B] transition-colors">
+                      <tr key={grievance.id} className="hover:bg-paper/70 transition-colors">
                         <td className="px-4 py-3.5">
-                          <Link to={`/grievances/${grievance.id}`} className="font-semibold text-[#1C2024] dark:text-[#FAF9F6] hover:text-[#2B5D4F] dark:hover:text-[#7EB5A6] transition-colors block line-clamp-1">
+                          <Link to={`/grievances/${grievance.id}`} className="font-semibold text-ink hover:text-accent transition-colors block line-clamp-1">
                             {grievance.title}
                           </Link>
                           <div className="mt-0.5 text-xs font-mono text-muted-foreground">
@@ -133,7 +133,7 @@ const AdminGrievancesPage = () => {
                           </div>
                         </td>
                         <td className="px-4 py-3.5">
-                          <span className="inline-flex items-center gap-1.5 text-xs font-mono font-medium">
+                          <span className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-ink">
                             <span className={`w-1.5 h-1.5 rounded-full ${st.dot}`} />
                             {st.label}
                           </span>
@@ -148,7 +148,7 @@ const AdminGrievancesPage = () => {
                           <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono border ${
                             grievance.published 
                               ? 'border-[#2B5D4F]/30 bg-[#2B5D4F]/5 text-[#2B5D4F] dark:text-[#7EB5A6]' 
-                              : 'border-[#E4E0D8] dark:border-[#2A2E33] bg-muted/40 text-muted-foreground'
+                              : 'border-line bg-muted/40 text-muted-foreground'
                           }`}>
                             {grievance.published ? 'Public' : 'Confidential'}
                           </span>
@@ -161,13 +161,13 @@ const AdminGrievancesPage = () => {
             </div>
 
             {/* Pagination Controls */}
-            <nav aria-label="Admin case pages" className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-[#E4E0D8] dark:border-[#2A2E33] bg-[#FAF9F6] dark:bg-[#16191C]">
+            <nav aria-label="Admin case pages" className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-line bg-paper">
               <Button 
                 variant="outline" 
                 size="sm" 
                 disabled={loading || page === 0} 
                 onClick={() => setPage(previous => previous - 1)}
-                className="border-[#E4E0D8] dark:border-[#2A2E33] text-xs font-mono"
+                className="border-line bg-surface text-ink hover:bg-paper text-xs font-mono"
               >
                 <ChevronLeft className="h-3.5 w-3.5 mr-1" /> Previous
               </Button>
@@ -178,8 +178,8 @@ const AdminGrievancesPage = () => {
                 variant="outline" 
                 size="sm" 
                 disabled={loading || Boolean(error) || page + 1 >= result.totalPages} 
-                onClick={() => setPage(previous => previous + 1)}
-                className="border-[#E4E0D8] dark:border-[#2A2E33] text-xs font-mono"
+                onClick={() => setPage(previous => previous - 1)}
+                className="border-line bg-surface text-ink hover:bg-paper text-xs font-mono"
               >
                 Next <ChevronRight className="h-3.5 w-3.5 ml-1" />
               </Button>

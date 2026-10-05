@@ -391,7 +391,7 @@ const GrievanceDetailsPage = () => {
 
             <Card className="border border-line shadow-sm rounded-3xl bg-surface p-6 sm:p-8">
               <CardHeader className="p-0 pb-4">
-                <CardTitle className="text-xs font-mono uppercase tracking-wider text-muted">Detailed Statement</CardTitle>
+                <CardTitle className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Detailed Statement</CardTitle>
               </CardHeader>
               <CardContent className="p-0 space-y-4">
                 <div className="text-base text-ink leading-relaxed font-sans whitespace-pre-wrap">
@@ -403,7 +403,7 @@ const GrievanceDetailsPage = () => {
             {/* Attachments Section */}
             <Card className="border border-line shadow-sm rounded-3xl bg-surface p-6 sm:p-8">
               <CardHeader className="p-0 pb-4">
-                <CardTitle className="text-xs font-mono uppercase tracking-wider text-muted flex items-center gap-2">
+                <CardTitle className="text-xs font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                   <ImageIcon className="h-4 w-4 text-accent" />
                   Attachments & Evidence
                 </CardTitle>
@@ -412,7 +412,7 @@ const GrievanceDetailsPage = () => {
                 {grievance.attachmentUrl || grievance.imageUrl ? (
                   <EvidenceDownload key={id} caseId={id} />
                 ) : (
-                  <div className="py-6 text-center text-xs font-mono text-muted italic">
+                  <div className="py-6 text-center text-xs font-mono text-muted-foreground italic">
                     No attachments or evidence files uploaded.
                   </div>
                 )}
@@ -431,14 +431,14 @@ const GrievanceDetailsPage = () => {
             {(grievance.status === 'RESOLVED' || grievance.status === 'CLOSED_BY_USER') && (
               <Card className="border border-line shadow-sm rounded-3xl bg-surface p-6 sm:p-8">
                 <CardHeader className="p-0 pb-4">
-                  <CardTitle className="text-xs font-mono uppercase tracking-wider text-muted flex items-center gap-2">
+                  <CardTitle className="text-xs font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                     <MessageSquare className="h-4 w-4 text-accent" />
                     Resolution Feedback
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0 space-y-4">
                   {loadingFeedback ? (
-                    <div className="py-4 text-center text-xs font-mono text-muted animate-pulse">
+                    <div className="py-4 text-center text-xs font-mono text-muted-foreground animate-pulse">
                       Retrieving feedback data...
                     </div>
                   ) : feedback ? (
@@ -451,7 +451,7 @@ const GrievanceDetailsPage = () => {
                           </div>
                           <div className="space-y-0.5">
                             <p className="text-xs font-bold text-ink">{feedback.userName || 'Citizen'}</p>
-                            <p className="text-[10px] text-muted font-mono uppercase tracking-wider">
+                            <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">
                               Submitted {new Date(feedback.createdAt).toLocaleDateString()}
                             </p>
                           </div>
@@ -464,7 +464,7 @@ const GrievanceDetailsPage = () => {
                                 "h-4 w-4",
                                 star <= feedback.rating
                                   ? "text-yellow-500 fill-yellow-500"
-                                  : "text-muted/30"
+                                  : "text-muted-foreground/30"
                               )}
                             />
                           ))}
@@ -480,7 +480,7 @@ const GrievanceDetailsPage = () => {
                     // Interactive Feedback Submission Form
                     <form onSubmit={handleSubmitFeedback} className="space-y-4">
                       <div className="space-y-2">
-                        <label className="text-xs font-mono uppercase tracking-wider text-muted block">
+                        <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground block">
                           Rate the Resolution Experience
                         </label>
                         <div className="flex items-center gap-2">
@@ -496,7 +496,7 @@ const GrievanceDetailsPage = () => {
                                   "h-7 w-7 transition-colors duration-200",
                                   star <= feedbackRating
                                     ? "text-yellow-500 fill-yellow-500 filter drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]"
-                                    : "text-muted hover:text-yellow-500/60"
+                                    : "text-muted-foreground hover:text-yellow-500/60"
                                 )}
                               />
                             </button>
@@ -504,7 +504,7 @@ const GrievanceDetailsPage = () => {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-xs font-mono uppercase tracking-wider text-muted block">
+                        <label className="text-xs font-mono uppercase tracking-wider text-muted-foreground block">
                           Provide Remarks / Review Comments
                         </label>
                         <textarea
@@ -513,9 +513,9 @@ const GrievanceDetailsPage = () => {
                           placeholder="Tell us about your experience with the resolution..."
                           maxLength={1000}
                           rows={3}
-                          className="w-full rounded-2xl border border-line bg-paper p-4 font-sans text-sm leading-relaxed text-ink placeholder:text-muted focus:border-accent focus:ring-2 focus:ring-accent/10 focus:outline-none resize-none transition-all"
+                          className="w-full rounded-2xl border border-line bg-paper p-4 font-sans text-sm leading-relaxed text-ink placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent/10 focus:outline-none resize-none transition-all"
                         />
-                        <div className="text-right text-[10px] font-mono text-muted">
+                        <div className="text-right text-[10px] font-mono text-muted-foreground">
                           {feedbackComments.length} / 1000 MAX
                         </div>
                       </div>
@@ -528,7 +528,7 @@ const GrievanceDetailsPage = () => {
                       </Button>
                     </form>
                   ) : (
-                    <div className="py-4 text-center text-xs font-mono text-muted italic">
+                    <div className="py-4 text-center text-xs font-mono text-muted-foreground italic">
                       No feedback submitted yet for this grievance.
                     </div>
                   )}
@@ -634,7 +634,7 @@ const GrievanceDetailsPage = () => {
             <Card className="border border-line shadow-sm bg-surface rounded-3xl overflow-hidden">
               <div className="h-1.5 bg-[#2B5D4F]" />
               <CardHeader className="p-6 pb-2">
-                <CardTitle className="text-xs font-mono uppercase tracking-wider text-muted flex items-center gap-2.5">
+                <CardTitle className="text-xs font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-2.5">
                   <ShieldCheck className="h-4 w-4 text-accent" />
                   Operational Status
                 </CardTitle>
@@ -642,15 +642,15 @@ const GrievanceDetailsPage = () => {
               <CardContent className="p-6 pt-2 space-y-6">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-muted font-sans font-medium">Grievance ID</span>
+                    <span className="text-muted-foreground font-sans font-medium">Grievance ID</span>
                     <span className="font-mono font-bold text-ink bg-paper px-2.5 py-1 rounded-md border border-line">#{id}</span>
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-muted font-sans font-medium">Urgency Level</span>
+                    <span className="text-muted-foreground font-sans font-medium">Urgency Level</span>
                     {s && <Badge className={`${s.bg} ${s.color} border-line font-mono uppercase text-[10px] px-2.5 py-0.5 rounded-full`}>{grievance.priority}</Badge>}
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-muted font-sans font-medium">SLA Window</span>
+                    <span className="text-muted-foreground font-sans font-medium">SLA Window</span>
                     <span className="font-mono font-semibold text-ink">48 Business Hours</span>
                   </div>
                 </div>
@@ -659,7 +659,7 @@ const GrievanceDetailsPage = () => {
 
                 <div className="space-y-3">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono uppercase tracking-wider text-muted">Assigned Officer</label>
+                    <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Assigned Officer</label>
                     <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-paper border border-line">
                       <div className="h-8 w-8 rounded-xl bg-accent-dim flex items-center justify-center text-accent">
                         <User className="h-4 w-4" />
@@ -669,7 +669,7 @@ const GrievanceDetailsPage = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono uppercase tracking-wider text-muted">Department Node</label>
+                    <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Department Node</label>
                     <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-paper border border-line">
                       <div className="h-8 w-8 rounded-xl bg-accent-dim flex items-center justify-center text-accent">
                         <Building2 className="h-4 w-4" />
@@ -699,7 +699,7 @@ const GrievanceDetailsPage = () => {
                        <Button className="w-full h-11 bg-accent hover:bg-[#234C40] text-white font-mono text-xs font-semibold uppercase tracking-wider rounded-xl shadow-sm">
                          Download Summary
                        </Button>
-                       <p className="text-center text-[11px] text-muted font-mono">Protocol transmission active</p>
+                       <p className="text-center text-[11px] text-muted-foreground font-mono">Protocol transmission active</p>
                     </div>
                   )}
                 </div>
@@ -711,7 +711,7 @@ const GrievanceDetailsPage = () => {
               <Card className="border border-line shadow-sm bg-surface rounded-3xl overflow-hidden">
                 <div className="h-1.5 bg-[#B8862E]" />
                 <CardHeader className="p-6 pb-2">
-                  <CardTitle className="text-xs font-mono uppercase tracking-wider text-muted flex items-center gap-2.5">
+                  <CardTitle className="text-xs font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-2.5">
                     <ShieldCheck className="h-4 w-4 text-[#B8862E]" />
                     Operational Panel
                   </CardTitle>
@@ -719,7 +719,7 @@ const GrievanceDetailsPage = () => {
                 <CardContent className="p-6 pt-2 space-y-4">
                   {/* Change Priority */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono uppercase tracking-wider text-muted">Urgency level</label>
+                    <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Urgency level</label>
                     <select 
                       value={localPriority} 
                       onChange={(e) => handlePriorityChange(e.target.value)}
@@ -733,7 +733,7 @@ const GrievanceDetailsPage = () => {
 
                   {/* Reassign Officer */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono uppercase tracking-wider text-muted">Assign Officer</label>
+                    <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Assign Officer</label>
                     <select 
                       value={localOfficerId} 
                       onChange={(e) => handleAssignOfficer(e.target.value)}
@@ -751,7 +751,7 @@ const GrievanceDetailsPage = () => {
                   {/* Status updates with remarks */}
                   <div className="space-y-3">
                     <div className="flex items-center justify-between pb-1">
-                      <label className="text-[10px] font-mono uppercase tracking-wider text-muted">Update visibility</label>
+                      <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Update visibility</label>
                       <div className="flex items-center gap-1 bg-paper border border-line p-1 rounded-full text-[10px] font-mono uppercase tracking-wider">
                         <button
                           type="button"
@@ -783,12 +783,12 @@ const GrievanceDetailsPage = () => {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-mono uppercase tracking-wider text-muted">Remarks & Note</label>
+                      <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Remarks & Note</label>
                       <textarea 
                         value={remarks}
                         onChange={(e) => setRemarks(e.target.value)}
                         placeholder={isInternal ? "Type internal triage notes (officers only)..." : "Type reply to citizen..."}
-                        className="w-full p-3.5 rounded-2xl bg-paper border border-line text-xs font-sans text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/10 h-24 resize-none leading-relaxed"
+                        className="w-full p-3.5 rounded-2xl bg-paper border border-line text-xs font-sans text-ink placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/10 h-24 resize-none leading-relaxed"
                       />
                     </div>
 
@@ -801,7 +801,7 @@ const GrievanceDetailsPage = () => {
 
                     <Separator className="bg-line my-2" />
 
-                    <label className="text-[10px] font-mono uppercase tracking-wider text-muted">Direct Status Actions</label>
+                    <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Direct Status Actions</label>
                     <div className="grid grid-cols-2 gap-2">
                       {grievance.status === 'PENDING' && (
                         <Button 

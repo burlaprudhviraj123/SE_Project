@@ -34,6 +34,12 @@
     --ring: #2B5D4F;
     --radius: 0.375rem;
 
+    --paper: #FAF9F6;
+    --ink: #1C2024;
+    --ink-muted: #5A6065;
+    --ink-faint: #8C9298;
+    --line: #E4E0D8;
+
     --status-pending: #B8862E;
     --status-progress: #2B5D4F;
     --status-resolved: #3F6B4A;
@@ -60,6 +66,12 @@
     --border: #2B3238;
     --input: #2B3238;
     --ring: #4A8C78;
+
+    --paper: #121517;
+    --ink: #F2EFEB;
+    --ink-muted: #8C9298;
+    --ink-faint: #5A6065;
+    --line: #2B3238;
   }
 
   * {

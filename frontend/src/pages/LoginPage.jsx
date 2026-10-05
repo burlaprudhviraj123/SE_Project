@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, CheckCircle2, ShieldCheck, KeyRound, ArrowLeft, Lock } from "lucide-react";
+import { AlertCircle, CheckCircle2, ShieldCheck, KeyRound, ArrowLeft, Lock, Moon, Sun } from "lucide-react";
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -27,6 +27,23 @@ const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved === 'dark';
+    return document.documentElement.classList.contains('dark');
+  });
+
+  const toggleTheme = () => {
+    const nextDark = !isDark;
+    setIsDark(nextDark);
+    if (nextDark) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -114,7 +131,18 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-paper p-4 selection:bg-accent/20">
+    <div className="min-h-screen flex items-center justify-center bg-paper p-4 selection:bg-accent/20 relative">
+      <div className="fixed top-4 right-4 z-50">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={toggleTheme}
+          aria-label="Toggle theme"
+          className="rounded-full border-line bg-surface text-ink shadow-sm h-9 w-9 hover:bg-paper cursor-pointer"
+        >
+          {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-[#2B5D4F]" />}
+        </Button>
+      </div>
       <Card className="w-full max-w-md border border-line bg-surface shadow-lg rounded-3xl overflow-hidden">
         <CardHeader className="space-y-2 text-center pt-8 pb-6 border-b border-line bg-surface">
           <div className="flex justify-center mb-1">
