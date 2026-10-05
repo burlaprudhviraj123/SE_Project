@@ -36,6 +36,11 @@ export default {
           DEFAULT: '#E4E0D8',
           subtle: '#EDEAE4',
         },
+        surface: {
+          DEFAULT: 'var(--surface)',
+          dark: '#181C1F',
+          light: '#FFFFFF',
+        },
         accent: {
           DEFAULT: '#2B5D4F',
           hover: '#234C40',

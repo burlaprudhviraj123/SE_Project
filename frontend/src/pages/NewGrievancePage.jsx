@@ -297,10 +297,10 @@ const NewGrievancePage = () => {
                 onValueChange={handleDepartmentChange}
                 required
               >
-                <SelectTrigger id="department" className="rounded-xl border-line bg-paper text-ink text-sm h-11 px-4">
+                <SelectTrigger id="department" className="rounded-xl border-line bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB] text-sm h-11 px-4">
                   <SelectValue placeholder={fetchingDeps ? "Loading departments..." : "Select College Department"} />
                 </SelectTrigger>
-                <SelectContent className="rounded-2xl border-line bg-surface text-ink shadow-xl">
+                <SelectContent className="rounded-2xl border-line bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB] shadow-2xl">
                   {departments.map((dept) => (
                     <SelectItem key={dept.id} value={dept.id.toString()} className="text-sm py-2 cursor-pointer focus:bg-accent-dim rounded-lg">
                       {dept.name}
@@ -323,10 +323,10 @@ const NewGrievancePage = () => {
                 onValueChange={(val) => setFormData({ ...formData, priority: val })}
                 required
               >
-                <SelectTrigger id="priority" className="rounded-xl border-line bg-paper text-ink text-sm h-11 px-4">
+                <SelectTrigger id="priority" className="rounded-xl border-line bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB] text-sm h-11 px-4">
                   <SelectValue placeholder="Select urgency" />
                 </SelectTrigger>
-                <SelectContent className="rounded-2xl border-line bg-surface text-ink shadow-xl">
+                <SelectContent className="rounded-2xl border-line bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB] shadow-2xl">
                   <SelectItem value="LOW" className="text-sm py-2 cursor-pointer focus:bg-accent-dim rounded-lg">
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-[#3F6B4A]" />

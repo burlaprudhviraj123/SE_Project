@@ -723,11 +723,11 @@ const GrievanceDetailsPage = () => {
                     <select 
                       value={localPriority} 
                       onChange={(e) => handlePriorityChange(e.target.value)}
-                      className="w-full h-11 px-3.5 rounded-xl bg-paper border border-line text-xs font-semibold text-ink focus:outline-none focus:ring-2 focus:ring-accent/10"
+                      className="w-full h-11 px-3.5 rounded-xl bg-white dark:bg-[#181C1F] border border-line text-xs font-semibold text-ink dark:text-[#F2EFEB] focus:outline-none focus:ring-2 focus:ring-accent/10"
                     >
-                      <option value="LOW">LOW</option>
-                      <option value="MEDIUM">MEDIUM</option>
-                      <option value="HIGH">HIGH</option>
+                      <option value="LOW" className="bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB]">LOW</option>
+                      <option value="MEDIUM" className="bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB]">MEDIUM</option>
+                      <option value="HIGH" className="bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB]">HIGH</option>
                     </select>
                   </div>
 
@@ -737,11 +737,11 @@ const GrievanceDetailsPage = () => {
                     <select 
                       value={localOfficerId} 
                       onChange={(e) => handleAssignOfficer(e.target.value)}
-                      className="w-full h-11 px-3.5 rounded-xl bg-paper border border-line text-xs font-semibold text-ink focus:outline-none focus:ring-2 focus:ring-accent/10"
+                      className="w-full h-11 px-3.5 rounded-xl bg-white dark:bg-[#181C1F] border border-line text-xs font-semibold text-ink dark:text-[#F2EFEB] focus:outline-none focus:ring-2 focus:ring-accent/10"
                     >
-                      <option value="">-- Unassigned --</option>
+                      <option value="" className="bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB]">-- Unassigned --</option>
                       {officers.map(off => (
-                        <option key={off.id} value={off.id}>{getOfficerName(off)} ({off.departmentName || 'No Department'})</option>
+                        <option key={off.id} value={off.id} className="bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB]">{getOfficerName(off)} ({off.departmentName || 'No Department'})</option>
                       ))}
                     </select>
                   </div>

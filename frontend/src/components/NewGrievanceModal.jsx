@@ -159,10 +159,10 @@ const NewGrievanceModal = ({ isOpen, onClose, onSuccess }) => {
                     onValueChange={(val) => setFormData({...formData, departmentId: val})}
                     required
                   >
-                    <SelectTrigger className="h-12 border-muted-foreground/10 bg-background/30 focus:border-cyan-400/50 transition-all">
+                    <SelectTrigger className="h-12 border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#181C1F] text-[#1C2024] dark:text-[#F2EFEB] focus:border-cyan-400/50 transition-all">
                       <SelectValue placeholder={fetchingDeps ? "Syncing..." : "Choose Department"} />
                     </SelectTrigger>
-                    <SelectContent className="backdrop-blur-xl border-border bg-card/90">
+                    <SelectContent className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#181C1F] text-[#1C2024] dark:text-[#F2EFEB] shadow-2xl">
                       {departments.map((dept) => (
                         <SelectItem key={dept.id} value={dept.id.toString()}>
                           {dept.name}
@@ -178,10 +178,10 @@ const NewGrievanceModal = ({ isOpen, onClose, onSuccess }) => {
                     onValueChange={(val) => setFormData({...formData, priority: val})}
                     required
                   >
-                    <SelectTrigger className="h-12 border-muted-foreground/10 bg-background/30 focus:border-cyan-400/50 transition-all">
+                    <SelectTrigger className="h-12 border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#181C1F] text-[#1C2024] dark:text-[#F2EFEB] focus:border-cyan-400/50 transition-all">
                       <SelectValue placeholder="Select Category" />
                     </SelectTrigger>
-                    <SelectContent className="backdrop-blur-xl border-border bg-card/90">
+                    <SelectContent className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#181C1F] text-[#1C2024] dark:text-[#F2EFEB] shadow-2xl">
                       <SelectItem value="LOW" className="group">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
