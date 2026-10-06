@@ -16,6 +16,7 @@ import RecentGrievancesPage from './pages/RecentGrievancesPage';
 import RegisterPage from './pages/RegisterPage';
 
 import AcceptInvitePage from './pages/AcceptInvitePage';
+import NotFoundPage from './pages/NotFoundPage';
 
 // Helper component for ScrollToTop in RouterProvider
 const ScrollWrapper = () => (
@@ -79,8 +80,12 @@ const App = () => {
           element: <Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />
         },
         {
+          path: "/404",
+          element: <NotFoundPage />
+        },
+        {
           path: "*",
-          element: <Navigate to="/" replace />
+          element: <NotFoundPage />
         }
       ]
     }
