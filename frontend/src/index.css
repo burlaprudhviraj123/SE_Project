@@ -114,8 +114,7 @@
 }
 
 .page-enter-animation {
-  animation: pageFadeInUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change: opacity, transform;
+  animation: pageFadeInUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Native Browser View Transitions */

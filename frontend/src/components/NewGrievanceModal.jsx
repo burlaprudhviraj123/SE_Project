@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import api from '../lib/api';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -101,13 +102,31 @@ const NewGrievanceModal = ({ isOpen, onClose, onSuccess }) => {
     }
   };
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="absolute inset-0 -z-10" onClick={onClose} />
+  if (!isOpen) return null;
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       
-      <Card className="w-full max-w-2xl border-border shadow-2xl bg-card/60 backdrop-blur-xl ring-1 ring-white/10 overflow-hidden transform perspective(1000px) rotateX(1deg) transition-all">
+      <Card 
+        className="relative z-10 my-auto w-full max-w-2xl border-border shadow-2xl bg-card/95 backdrop-blur-xl ring-1 ring-white/10 overflow-hidden transition-all"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="h-1.5 bg-gradient-to-r from-cyan-400 via-primary to-blue-600 w-full" />
         
         <CardHeader className="relative space-y-2 pb-6">
@@ -322,7 +341,8 @@ const NewGrievanceModal = ({ isOpen, onClose, onSuccess }) => {
           )}
         </CardContent>
       </Card>
-    </div>
+    </div>,
+    document.body
   );
 };
 

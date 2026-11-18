@@ -1,5 +1,6 @@
 
 import * as React from "react"
+import { createPortal } from "react-dom"
 import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -27,7 +28,8 @@ function SheetTrigger({ asChild, children, onClick, ...props }) {
 }
 
 function SheetPortal({ children }) {
-  return <>{children}</>
+  if (typeof document === "undefined") return null;
+  return createPortal(children, document.body);
 }
 
 const SheetOverlay = React.forwardRef(({ className, ...props }, ref) => {
@@ -37,7 +39,7 @@ const SheetOverlay = React.forwardRef(({ className, ...props }, ref) => {
     <div
       ref={ref}
       className={cn(
-        "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-in-out",
+        "fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-in-out",
         className
       )}
       onClick={() => context?.onOpenChange?.(false)}
@@ -49,9 +51,25 @@ SheetOverlay.displayName = "SheetOverlay"
 
 const SheetContent = React.forwardRef(({ side = "right", className, children, ...props }, ref) => {
   const context = React.useContext(SheetContext)
+
+  React.useEffect(() => {
+    if (!context?.open) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") context?.onOpenChange?.(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [context?.open, context?.onOpenChange]);
+
   if (!context?.open) return null
-  return (
-    <>
+
+  const sheetNode = (
+    <div className="fixed inset-0 z-50 overflow-hidden">
       <SheetOverlay />
       <div
         ref={ref}
@@ -62,6 +80,7 @@ const SheetContent = React.forwardRef(({ side = "right", className, children, ..
           side === "right" && "inset-y-0 right-0 h-full w-full sm:max-w-md translate-x-0",
           className
         )}
+        onClick={(e) => e.stopPropagation()}
         {...props}
       >
         {children}
@@ -74,8 +93,11 @@ const SheetContent = React.forwardRef(({ side = "right", className, children, ..
           <span className="sr-only">Close</span>
         </button>
       </div>
-    </>
-  )
+    </div>
+  );
+
+  if (typeof document === "undefined") return null;
+  return createPortal(sheetNode, document.body);
 })
 SheetContent.displayName = "SheetContent"
 

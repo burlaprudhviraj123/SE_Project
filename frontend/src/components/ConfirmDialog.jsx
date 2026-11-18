@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   X, AlertTriangle, Info, CheckCircle2, AlertCircle, XCircle 
 } from 'lucide-react';
@@ -16,7 +17,22 @@ const ConfirmDialog = ({
   type = "warning", // 'warning', 'info', 'success', 'error'
   loading = false
 }) => {
+  useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
+  if (typeof document === 'undefined') return null;
 
   const getConfig = () => {
     switch (type) {
@@ -30,16 +46,19 @@ const ConfirmDialog = ({
   const config = getConfig();
   const Icon = config.icon;
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-background/80 backdrop-blur-sm animate-in fade-in duration-300"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
         onClick={onClose}
       />
       
       {/* Modal Card */}
-      <Card className="relative w-full max-w-md border-none shadow-2xl ring-1 ring-border bg-card/95 backdrop-blur-md animate-in zoom-in-95 slide-in-from-bottom-4 duration-300 rounded-[2rem] overflow-hidden">
+      <Card 
+        className="relative z-10 my-auto w-full max-w-md border-none shadow-2xl ring-1 ring-border bg-card/95 backdrop-blur-md animate-in zoom-in-95 duration-200 rounded-[2rem] overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className={`h-1.5 w-full ${config.bg.replace('/10', '')}`} />
         
         <CardHeader className="pt-8 pb-4 text-center">
@@ -80,7 +99,8 @@ const ConfirmDialog = ({
           <X className="w-4 h-4" />
         </button>
       </Card>
-    </div>
+    </div>,
+    document.body
   );
 };
 
