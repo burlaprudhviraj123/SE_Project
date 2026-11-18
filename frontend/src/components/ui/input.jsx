@@ -20,3 +20,5 @@ function Input({
 }
 
 export { Input }
+export { FloatingInput } from "./floating-input"
+

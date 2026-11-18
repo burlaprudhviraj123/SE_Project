@@ -136,12 +136,41 @@
   box-shadow: 0 10px 24px -6px rgba(28, 32, 36, 0.06), 0 4px 8px -4px rgba(28, 32, 36, 0.04);
 }
 
+/* ============================================================
+   BOTTOM SHEET SPRING & GENTLE SETTLE MOTION
+   ============================================================ */
+@keyframes sheetSpringUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0.6;
+  }
+  52% {
+    transform: translateY(-16px);
+    opacity: 1;
+  }
+  74% {
+    transform: translateY(6px);
+  }
+  88% {
+    transform: translateY(-2px);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-sheet-spring-bottom {
+  animation: sheetSpringUp 0.54s cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
 /* Accessibility: Respect user motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .page-enter-animation,
   ::view-transition-old(root),
   ::view-transition-new(root),
-  .hover-lift {
+  .hover-lift,
+  .animate-sheet-spring-bottom {
     animation: none !important;
     transition: none !important;
     transform: none !important;

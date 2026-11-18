@@ -4,14 +4,16 @@ import { useNavigate, Link } from 'react-router-dom';
 import { loginStart, loginSuccess, loginFailure } from '../store/authSlice';
 import { loginUser, forgotPassword, resetPassword } from '../lib/api';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input, FloatingInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, CheckCircle2, ShieldCheck, KeyRound, ArrowLeft, Lock, Moon, Sun } from "lucide-react";
+import { AlertCircle, CheckCircle2, ShieldCheck, KeyRound, ArrowLeft, Lock, Moon, Sun, Eye, EyeOff } from "lucide-react";
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const [localError, setLocalError] = useState('');
   
   // Forgot password state
@@ -161,39 +163,43 @@ const LoginPage = () => {
         <CardContent className="p-6 sm:p-8 space-y-5">
           {!showForgot ? (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="username" className="text-xs font-semibold text-ink">Roll Number or College Email</Label>
-                <Input 
-                  id="username" 
-                  placeholder="e.g. A24126510123 or user@anits.edu.in" 
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="h-11 px-4 rounded-xl text-sm border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10"
-                  required
-                />
-              </div>
+              <FloatingInput 
+                id="username" 
+                label="Roll Number or College Email"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+                required
+              />
 
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-xs font-semibold text-ink">Password</Label>
-                  <button
-                    type="button"
-                    onClick={() => { setShowForgot(true); setLocalError(''); }}
-                    className="text-xs font-medium text-accent hover:underline"
-                  >
-                    Forgot password?
-                  </button>
-                </div>
-                <Input 
-                  id="password" 
-                  type="password" 
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-11 px-4 rounded-xl text-sm border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10"
-                  required
-                />
-              </div>
+              <FloatingInput 
+                id="password" 
+                type={showPassword ? "text" : "password"}
+                label="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+                endAdornment={
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="p-1 text-muted-foreground hover:text-ink transition-colors"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setShowForgot(true); setLocalError(''); }}
+                      className="text-xs font-medium text-accent hover:underline ml-0.5"
+                    >
+                      Forgot?
+                    </button>
+                  </div>
+                }
+              />
               
               {(localError || error) && (
                 <div className="p-3 rounded-xl bg-status-rejected/10 border border-status-rejected/20 flex items-center gap-2.5 text-status-rejected text-xs">
@@ -216,18 +222,15 @@ const LoginPage = () => {
                 Enter your registered ANITS email address. We will dispatch a 6-digit OTP code to verify your identity.
               </p>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="forgotEmail" className="text-xs font-semibold text-ink">ANITS College Email</Label>
-                <Input
-                  id="forgotEmail"
-                  type="email"
-                  placeholder="your.id@anits.edu.in"
-                  value={forgotEmail}
-                  onChange={(e) => setForgotEmail(e.target.value)}
-                  className="h-11 px-4 rounded-xl text-sm border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10"
-                  required
-                />
-              </div>
+              <FloatingInput
+                id="forgotEmail"
+                type="email"
+                label="ANITS College Email"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                autoComplete="email"
+                required
+              />
 
               {forgotError && (
                 <div className="p-3 rounded-xl bg-status-rejected/10 border border-status-rejected/20 flex items-center gap-2.5 text-status-rejected text-xs">
@@ -261,32 +264,34 @@ const LoginPage = () => {
                 </div>
               )}
 
-              <div className="space-y-1.5">
-                <Label htmlFor="forgotOtp" className="text-xs font-semibold text-ink">6-Digit Verification Code</Label>
-                <Input
-                  id="forgotOtp"
-                  type="text"
-                  maxLength={6}
-                  placeholder="000000"
-                  value={forgotOtp}
-                  onChange={(e) => setForgotOtp(e.target.value.replace(/\D/g, ''))}
-                  className="h-12 rounded-xl text-center text-xl tracking-[0.4em] font-mono border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10"
-                  required
-                />
-              </div>
+              <FloatingInput
+                id="forgotOtp"
+                type="text"
+                maxLength={6}
+                label="6-Digit Verification Code"
+                value={forgotOtp}
+                onChange={(e) => setForgotOtp(e.target.value.replace(/\D/g, ''))}
+                required
+              />
 
-              <div className="space-y-1.5">
-                <Label htmlFor="newPassword" className="text-xs font-semibold text-ink">New Password</Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  placeholder="Minimum 8 characters"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="h-11 px-4 rounded-xl text-sm border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10"
-                  required
-                />
-              </div>
+              <FloatingInput
+                id="newPassword"
+                type={showNewPassword ? "text" : "password"}
+                label="New Password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+                endAdornment={
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="p-1 text-muted-foreground hover:text-ink transition-colors"
+                    aria-label={showNewPassword ? "Hide password" : "Show password"}
+                  >
+                    {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                }
+              />
 
               {forgotError && (
                 <div className="p-3 rounded-xl bg-status-rejected/10 border border-status-rejected/20 flex items-center gap-2.5 text-status-rejected text-xs">

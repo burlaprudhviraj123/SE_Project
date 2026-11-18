@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { loginSuccess } from '../store/authSlice';
 import { registerStudent, verifyOtp } from '../lib/api';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input, FloatingInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -189,97 +189,83 @@ const RegisterPage = () => {
 
               {/* Personal Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <Label htmlFor="firstName" className="text-xs font-semibold text-ink">First Name *</Label>
-                  <Input 
-                    id="firstName" 
-                    placeholder="e.g. Rahul" 
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    className="h-11 px-4 rounded-xl text-sm border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10"
-                    required
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="lastName" className="text-xs font-semibold text-ink">Last Name *</Label>
-                  <Input 
-                    id="lastName" 
-                    placeholder="e.g. Sharma" 
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    className="h-11 px-4 rounded-xl text-sm border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10"
-                    required
-                  />
-                </div>
+                <FloatingInput 
+                  id="firstName" 
+                  name="firstName"
+                  label="First Name *"
+                  placeholder=" "
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required
+                />
+                <FloatingInput 
+                  id="lastName" 
+                  name="lastName"
+                  label="Last Name *"
+                  placeholder=" "
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
               {/* Username & College Email */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <Label htmlFor="username" className="text-xs font-semibold text-ink">Student Roll Number (ID) *</Label>
-                  <Input 
-                    id="username" 
-                    placeholder="e.g. A24126510123" 
-                    value={formData.username}
-                    onChange={handleChange}
-                    className="h-11 px-4 rounded-xl text-sm border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10"
-                    required
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="email" className="text-xs font-semibold text-ink">ANITS College Email *</Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="student@anits.edu.in" 
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="h-11 px-4 rounded-xl text-sm border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10"
-                    required
-                  />
-                </div>
+                <FloatingInput 
+                  id="username" 
+                  name="username"
+                  label="Student Roll Number (ID) *"
+                  placeholder=" "
+                  value={formData.username}
+                  onChange={handleChange}
+                  required
+                />
+                <FloatingInput 
+                  id="email" 
+                  name="email"
+                  type="email" 
+                  label="ANITS College Email *"
+                  placeholder=" "
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
               {/* Password Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <Label htmlFor="password" className="text-xs font-semibold text-ink">Password *</Label>
-                  <Input 
-                    id="password" 
-                    type="password" 
-                    placeholder="Min 8 characters"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="h-11 px-4 rounded-xl text-sm border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10"
-                    required
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="confirmPassword" className="text-xs font-semibold text-ink">Confirm Password *</Label>
-                  <Input 
-                    id="confirmPassword" 
-                    type="password" 
-                    placeholder="Repeat password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    className="h-11 px-4 rounded-xl text-sm border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Contact */}
-              <div className="space-y-1.5">
-                <Label htmlFor="phoneNumber" className="text-xs font-semibold text-ink">Mobile Number (10 digits) *</Label>
-                <Input 
-                  id="phoneNumber" 
-                  placeholder="9876543210" 
-                  value={formData.phoneNumber}
+                <FloatingInput 
+                  id="password" 
+                  name="password"
+                  type="password" 
+                  label="Password *"
+                  placeholder=" "
+                  value={formData.password}
                   onChange={handleChange}
-                  className="h-11 px-4 rounded-xl text-sm border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10"
+                  required
+                />
+                <FloatingInput 
+                  id="confirmPassword" 
+                  name="confirmPassword"
+                  type="password" 
+                  label="Confirm Password *"
+                  placeholder=" "
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
                   required
                 />
               </div>
+
+              {/* Contact */}
+              <FloatingInput 
+                id="phoneNumber" 
+                name="phoneNumber"
+                label="Mobile Number (10 digits) *"
+                placeholder=" "
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                required
+              />
 
               {/* Address (Optional) */}
               <div className="space-y-1.5">

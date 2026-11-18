@@ -1,5 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { RollingNumber } from "@/components/ui/rolling-number";
 import { Button } from "@/components/ui/button";
 import {
     Card, CardContent, CardDescription, CardHeader, CardTitle
@@ -90,6 +91,14 @@ const DashboardPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [deptDialogOpen, setDeptDialogOpen] = useState(false);
   const [usersDialogOpen, setUsersDialogOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // Real-time Notification simulation
   useEffect(() => {
@@ -569,7 +578,9 @@ const DashboardPage = () => {
               </div>
             </div>
             <div className="flex items-baseline justify-between">
-              <div className="text-3xl font-mono font-bold tracking-tight text-[#9B4A3F]">{escalatedCount}</div>
+              <div className="text-3xl font-mono font-bold tracking-tight text-[#9B4A3F]">
+                <RollingNumber value={escalatedCount} />
+              </div>
               {isAdmin && escalatedCount > 0 && (
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#9B4A3F]/10 text-[#9B4A3F] border border-[#9B4A3F]/20">
                   Critical
@@ -588,7 +599,9 @@ const DashboardPage = () => {
               </div>
             </div>
             <div className="flex items-baseline justify-between">
-              <div className="text-3xl font-mono font-bold tracking-tight text-[#3F6B4A] dark:text-[#88C096]">{stats.resolvedGrievances || 0}</div>
+              <div className="text-3xl font-mono font-bold tracking-tight text-[#3F6B4A] dark:text-[#88C096]">
+                <RollingNumber value={stats.resolvedGrievances || 0} />
+              </div>
               {isAdmin && (
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#3F6B4A]/10 text-[#3F6B4A] dark:text-[#88C096] border border-[#3F6B4A]/20 flex items-center gap-1">
                   <TrendingUp className="h-3 w-3" /> Closed
@@ -607,7 +620,9 @@ const DashboardPage = () => {
               </div>
             </div>
             <div className="flex items-baseline justify-between">
-              <div className="text-3xl font-mono font-bold tracking-tight text-[#2B5D4F] dark:text-[#7EB5A6]">{stats.inProgressGrievances || 0}</div>
+              <div className="text-3xl font-mono font-bold tracking-tight text-[#2B5D4F] dark:text-[#7EB5A6]">
+                <RollingNumber value={stats.inProgressGrievances || 0} />
+              </div>
               {isAdmin && (
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#2B5D4F]/10 text-[#2B5D4F] dark:text-[#7EB5A6] border border-[#2B5D4F]/20">
                   Active
@@ -628,10 +643,12 @@ const DashboardPage = () => {
               </div>
             </div>
             <div className="flex items-baseline justify-between">
-              <div className="text-3xl font-mono font-bold tracking-tight text-[#B8862E]">{stats.pendingGrievances || 0}</div>
+              <div className="text-3xl font-mono font-bold tracking-tight text-[#B8862E]">
+                <RollingNumber value={stats.pendingGrievances || 0} />
+              </div>
               {isAdmin && (
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#B8862E]/10 text-[#B8862E] border border-[#B8862E]/20">
-                  {unassignedPendingCount} Unclaimed
+                  <RollingNumber value={unassignedPendingCount} /> Unclaimed
                 </span>
               )}
             </div>
@@ -969,7 +986,7 @@ const DashboardPage = () => {
           setSelectedAssigneeId("");
         }
       }}>
-        <SheetContent side="right" className="w-full sm:max-w-md flex flex-col h-full justify-between pb-8 bg-white dark:bg-[#1A1D20] border-l border-[#E4E0D8] dark:border-[#2A2E33] rounded-l-3xl">
+        <SheetContent side={isMobile ? "bottom" : "right"} className={isMobile ? "w-full max-h-[85vh] flex flex-col justify-between pb-8 bg-white dark:bg-[#1A1D20]" : "w-full sm:max-w-md flex flex-col h-full justify-between pb-8 bg-white dark:bg-[#1A1D20] border-l border-[#E4E0D8] dark:border-[#2A2E33] rounded-l-3xl"}>
           <div className="space-y-6 overflow-y-auto pr-2 flex-1">
             <SheetHeader className="border-b border-[#E4E0D8] dark:border-[#2A2E33] pb-4">
               <div className="flex items-center justify-between gap-4 mt-2">

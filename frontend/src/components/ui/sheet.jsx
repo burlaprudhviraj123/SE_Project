@@ -68,6 +68,8 @@ const SheetContent = React.forwardRef(({ side = "right", className, children, ..
 
   if (!context?.open) return null
 
+  const isBottom = side === "bottom";
+
   const sheetNode = (
     <div className="fixed inset-0 z-50 overflow-hidden">
       <SheetOverlay />
@@ -76,13 +78,21 @@ const SheetContent = React.forwardRef(({ side = "right", className, children, ..
         role="dialog"
         aria-modal="true"
         className={cn(
-          "fixed z-50 bg-card p-6 shadow-2xl border-l border-border/40 transition-transform duration-300 ease-in-out",
-          side === "right" && "inset-y-0 right-0 h-full w-full sm:max-w-md translate-x-0",
+          "fixed z-50 bg-card p-6 shadow-2xl transition-all duration-300 ease-in-out",
+          side === "right" && "inset-y-0 right-0 h-full w-full sm:max-w-md border-l border-border/40 translate-x-0 animate-in slide-in-from-right duration-300",
+          side === "left" && "inset-y-0 left-0 h-full w-full sm:max-w-md border-r border-border/40 translate-x-0 animate-in slide-in-from-left duration-300",
+          side === "top" && "inset-x-0 top-0 w-full border-b border-border/40 animate-in slide-in-from-top duration-300",
+          side === "bottom" && "inset-x-0 bottom-0 max-h-[88vh] w-full max-w-2xl mx-auto rounded-t-3xl border-t border-border/40 animate-sheet-spring-bottom overflow-y-auto",
           className
         )}
         onClick={(e) => e.stopPropagation()}
         {...props}
       >
+        {isBottom && (
+          <div className="flex justify-center -mt-2 pb-3 cursor-grab">
+            <div className="h-1.5 w-12 rounded-full bg-muted-foreground/30 hover:bg-muted-foreground/50 transition-colors" />
+          </div>
+        )}
         {children}
         <button
           type="button"
@@ -135,6 +145,16 @@ const SheetDescription = React.forwardRef(({ className, ...props }, ref) => (
 ))
 SheetDescription.displayName = "SheetDescription"
 
+function BottomSheet({ open, onOpenChange, children, className, ...props }) {
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="bottom" className={className} {...props}>
+        {children}
+      </SheetContent>
+    </Sheet>
+  );
+}
+
 export {
   Sheet,
   SheetPortal,
@@ -145,4 +165,5 @@ export {
   SheetFooter,
   SheetTitle,
   SheetDescription,
+  BottomSheet,
 }

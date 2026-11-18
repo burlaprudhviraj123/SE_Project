@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { RollingNumber } from "@/components/ui/rolling-number";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -73,6 +74,14 @@ const OfficerDashboardPage = () => {
   const [resolutionRemarks, setResolutionRemarks] = useState("");
   const [resolutionVisibility, setResolutionVisibility] = useState('INTERNAL');
   const [submittingResolution, setSubmittingResolution] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Fetch Dashboard Stats & Lists
   const loadDashboardData = useCallback(async () => {
@@ -280,7 +289,9 @@ const OfficerDashboardPage = () => {
               <span className="text-xs font-mono uppercase tracking-wider">Department Pool</span>
               <Inbox className="w-4 h-4 text-[#B8862E]" />
             </div>
-            <div className="text-3xl font-mono font-bold text-[#1C2024] dark:text-[#FAF9F6]">{stats.deptUnassignedCount}</div>
+            <div className="text-3xl font-mono font-bold text-[#1C2024] dark:text-[#FAF9F6]">
+              <RollingNumber value={stats.deptUnassignedCount} />
+            </div>
             <p className="text-xs text-muted-foreground mt-1 font-sans">Unassigned tickets in department pool</p>
           </div>
 
@@ -290,7 +301,9 @@ const OfficerDashboardPage = () => {
               <span className="text-xs font-mono uppercase tracking-wider">My Active Tasks</span>
               <Clock className="w-4 h-4 text-[#2B5D4F]" />
             </div>
-            <div className="text-3xl font-mono font-bold text-[#2B5D4F] dark:text-[#7EB5A6]">{stats.myActiveTasksCount}</div>
+            <div className="text-3xl font-mono font-bold text-[#2B5D4F] dark:text-[#7EB5A6]">
+              <RollingNumber value={stats.myActiveTasksCount} />
+            </div>
             <p className="text-xs text-muted-foreground mt-1 font-sans">Cases claimed under active investigation</p>
           </div>
 
@@ -300,7 +313,9 @@ const OfficerDashboardPage = () => {
               <span className="text-xs font-mono uppercase tracking-wider">Resolved by Me</span>
               <CheckCircle2 className="w-4 h-4 text-[#3F6B4A]" />
             </div>
-            <div className="text-3xl font-mono font-bold text-[#3F6B4A] dark:text-[#88C096]">{stats.myResolvedCount}</div>
+            <div className="text-3xl font-mono font-bold text-[#3F6B4A] dark:text-[#88C096]">
+              <RollingNumber value={stats.myResolvedCount} />
+            </div>
             <p className="text-xs text-muted-foreground mt-1 font-sans">Closed & resolved cases</p>
           </div>
 
@@ -310,7 +325,9 @@ const OfficerDashboardPage = () => {
               <span className="text-xs font-mono uppercase tracking-wider">SLA Warnings</span>
               <Flame className="w-4 h-4 text-[#9B4A3F]" />
             </div>
-            <div className="text-3xl font-mono font-bold text-[#9B4A3F] dark:text-[#E07A6E]">{stats.slaBreachedCount}</div>
+            <div className="text-3xl font-mono font-bold text-[#9B4A3F] dark:text-[#E07A6E]">
+              <RollingNumber value={stats.slaBreachedCount} />
+            </div>
             <p className="text-xs text-muted-foreground mt-1 font-sans">Overdue / SLA threshold alerts</p>
           </div>
         </div>
@@ -323,13 +340,13 @@ const OfficerDashboardPage = () => {
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
               <TabsList className="bg-[#E4E0D8]/50 dark:bg-[#202428] p-1 rounded-lg w-full sm:w-auto grid grid-cols-3">
                 <TabsTrigger value="queue" className="rounded font-mono text-xs uppercase data-[state=active]:bg-white dark:data-[state=active]:bg-[#1A1D20] data-[state=active]:shadow-sm">
-                  Dept Queue ({deptQueue.length})
+                  Dept Queue (<RollingNumber value={deptQueue.length} />)
                 </TabsTrigger>
                 <TabsTrigger value="workload" className="rounded font-mono text-xs uppercase data-[state=active]:bg-white dark:data-[state=active]:bg-[#1A1D20] data-[state=active]:shadow-sm">
-                  My Workload ({myWorkload.length})
+                  My Workload (<RollingNumber value={myWorkload.length} />)
                 </TabsTrigger>
                 <TabsTrigger value="history" className="rounded font-mono text-xs uppercase data-[state=active]:bg-white dark:data-[state=active]:bg-[#1A1D20] data-[state=active]:shadow-sm">
-                  Resolved History ({resolvedHistory.length})
+                  Resolved (<RollingNumber value={resolvedHistory.length} />)
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -568,7 +585,7 @@ const OfficerDashboardPage = () => {
 
         {/* Resolution Slide-over Drawer / Modal */}
         <Sheet open={drawerOpen} onOpenChange={(open) => { setDrawerOpen(open); if (!open) setSelectedTicket(null); }}>
-          <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto flex flex-col justify-between bg-white dark:bg-[#1A1D20] border-l border-[#E4E0D8] dark:border-[#2A2E33]">
+          <SheetContent side={isMobile ? "bottom" : "right"} className={isMobile ? "w-full max-h-[88vh] overflow-y-auto flex flex-col justify-between bg-white dark:bg-[#1A1D20]" : "w-full sm:max-w-lg overflow-y-auto flex flex-col justify-between bg-white dark:bg-[#1A1D20] border-l border-[#E4E0D8] dark:border-[#2A2E33]"}>
             <div>
               <SheetHeader className="mb-6 border-b border-[#E4E0D8] dark:border-[#2A2E33] pb-4">
                 <div className="flex items-center gap-2">
