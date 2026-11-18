@@ -64,9 +64,9 @@ public class GrievanceService {
     
     private static final Map<GrievanceStatus, Set<GrievanceStatus>> ALLOWED_TRANSITIONS = new HashMap<>();
     static {
-        ALLOWED_TRANSITIONS.put(GrievanceStatus.PENDING, Set.of(GrievanceStatus.ASSIGNED, GrievanceStatus.IN_PROGRESS, GrievanceStatus.REJECTED));
-        ALLOWED_TRANSITIONS.put(GrievanceStatus.ASSIGNED, Set.of(GrievanceStatus.IN_PROGRESS, GrievanceStatus.REJECTED));
-        ALLOWED_TRANSITIONS.put(GrievanceStatus.IN_PROGRESS, Set.of(GrievanceStatus.RESOLVED, GrievanceStatus.REJECTED));
+        ALLOWED_TRANSITIONS.put(GrievanceStatus.PENDING, Set.of(GrievanceStatus.ASSIGNED, GrievanceStatus.IN_PROGRESS, GrievanceStatus.RESOLVED, GrievanceStatus.REJECTED));
+        ALLOWED_TRANSITIONS.put(GrievanceStatus.ASSIGNED, Set.of(GrievanceStatus.ASSIGNED, GrievanceStatus.IN_PROGRESS, GrievanceStatus.RESOLVED, GrievanceStatus.REJECTED));
+        ALLOWED_TRANSITIONS.put(GrievanceStatus.IN_PROGRESS, Set.of(GrievanceStatus.ASSIGNED, GrievanceStatus.IN_PROGRESS, GrievanceStatus.RESOLVED, GrievanceStatus.REJECTED));
         ALLOWED_TRANSITIONS.put(GrievanceStatus.RESOLVED, Set.of());
         ALLOWED_TRANSITIONS.put(GrievanceStatus.REJECTED, Set.of());
         ALLOWED_TRANSITIONS.put(GrievanceStatus.CLOSED_BY_USER, Set.of());
@@ -237,7 +237,8 @@ public class GrievanceService {
         }
 
         // Validate status transition
-        if (!ALLOWED_TRANSITIONS.getOrDefault(grievance.getStatus(), Set.of()).contains(request.getStatus())) {
+        boolean isSameStatus = grievance.getStatus() == request.getStatus();
+        if (!isSameStatus && !ALLOWED_TRANSITIONS.getOrDefault(grievance.getStatus(), Set.of()).contains(request.getStatus())) {
             throw new BadRequestException("Cannot change status from " + grievance.getStatus() + " to " + request.getStatus());
         }
         String remarks = request.getEffectiveRemarks();
