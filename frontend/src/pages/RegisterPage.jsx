@@ -326,11 +326,11 @@ const RegisterPage = () => {
           </DirectionalStep>
           <DirectionalStep step="VERIFY_OTP">
             <form onSubmit={handleOtpSubmit} className="space-y-4">
-              <div className="p-4 bg-accent-dim border border-accent/20 rounded-2xl text-xs text-ink-muted space-y-1">
+              <div className="p-4 bg-accent-dim border border-accent/20 rounded-2xl text-xs text-neutral-800 dark:text-neutral-900 space-y-1">
                 <p>
-                  Please enter the 6-digit OTP code sent to your ANITS email inbox (<strong className="text-ink">{registeredEmail}</strong>). The code is valid for 10 minutes.
+                  Please enter the 6-digit OTP code sent to your ANITS email inbox (<strong className="text-black font-bold">{registeredEmail}</strong>). The code is valid for 10 minutes.
                 </p>
-                <p className="text-[11px] text-ink-faint">
+                <p className="text-[11px] text-neutral-600 dark:text-neutral-700">
                   (In development mode, check your server console log for the dispatched OTP code).
                 </p>
               </div>
