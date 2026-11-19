@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import api from '../lib/api';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Users, Search, Shield, Building2, UserCheck, UserX, Loader2, CheckCircle2, AlertCircle, RefreshCw, AlertTriangle } from "lucide-react";
+import { Users, Search, Shield, Building2, UserCheck, UserX, Trash2, Loader2, CheckCircle2, AlertCircle, RefreshCw, AlertTriangle } from "lucide-react";
 import ConfirmDialog from './ConfirmDialog';
 
 export default function AdminUsersDialog({ isOpen, onClose, onUserUpdated }) {
+  const { user: currentUser } = useSelector((state) => state.auth);
   const [users, setUsers] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -82,6 +84,33 @@ export default function AdminUsersDialog({ isOpen, onClose, onUserUpdated }) {
         } catch (err) {
           console.error("Toggle active failed", err);
           setStatusMessage({ type: 'error', text: "Failed to update account active status." });
+        }
+      }
+    });
+  };
+
+  const handleDeleteUser = (userToDelete) => {
+    setConfirmModal({
+      isOpen: true,
+      title: "Permanently Delete Account?",
+      description: `Permanently delete the account for ${userToDelete.fullName || userToDelete.username} (${userToDelete.email})? This action cannot be undone. All credentials and user data will be purged.`,
+      confirmText: "Delete Account",
+      type: "error",
+      action: async () => {
+        try {
+          await api.delete(`/admin/users/${userToDelete.id}`);
+          setStatusMessage({
+            type: 'success',
+            text: `Account for ${userToDelete.username} (${userToDelete.email}) was permanently deleted.`
+          });
+          fetchData();
+          if (onUserUpdated) onUserUpdated();
+        } catch (err) {
+          console.error("Delete user failed", err);
+          setStatusMessage({
+            type: 'error',
+            text: err.response?.data?.message || "Failed to permanently delete user account."
+          });
         }
       }
     });
@@ -352,6 +381,20 @@ export default function AdminUsersDialog({ isOpen, onClose, onUserUpdated }) {
                           </>
                         )}
                       </Button>
+
+                      {/* Permanent Delete Button (Admin only, cannot delete self) */}
+                      {String(u.id) !== String(currentUser?.id) && u.username !== currentUser?.username && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteUser(u)}
+                          className="rounded-xl h-8 px-2.5 text-xs font-mono text-[#9B4A3F] hover:bg-[#9B4A3F]/10 hover:text-[#9B4A3F]"
+                          title="Permanently Delete Account"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete
+                        </Button>
+                      )}
                     </div>
 
                   </div>
@@ -437,6 +480,7 @@ export default function AdminUsersDialog({ isOpen, onClose, onUserUpdated }) {
         }}
         title={confirmModal.title}
         description={confirmModal.description}
+        confirmText={confirmModal.confirmText}
         type={confirmModal.type}
       />
     </>

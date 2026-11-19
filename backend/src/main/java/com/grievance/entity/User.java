@@ -107,15 +107,15 @@ public class User {
     @Builder.Default
     private Set<Grievance> submittedGrievances = new HashSet<>();
 
-    @OneToMany(mappedBy = "assignedOfficer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "assignedOfficer", fetch = FetchType.LAZY)
     @Builder.Default
     private Set<Grievance> assignedGrievances = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private Set<Feedback> feedbacks = new HashSet<>();
 
-    @OneToMany(mappedBy = "updatedByUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "updatedByUser", fetch = FetchType.LAZY)
     @Builder.Default
     private Set<GrievanceHistory> grievanceHistories = new HashSet<>();
 

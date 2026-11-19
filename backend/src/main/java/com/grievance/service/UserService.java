@@ -25,8 +25,13 @@ import com.grievance.enums.Role;
 import com.grievance.exception.BadRequestException;
 import com.grievance.exception.ResourceNotFoundException;
 import com.grievance.repository.DepartmentRepository;
+import com.grievance.repository.FeedbackRepository;
 import com.grievance.repository.GrievanceHistoryRepository;
 import com.grievance.repository.GrievanceRepository;
+import com.grievance.repository.GrievanceUpvoteRepository;
+import com.grievance.repository.InviteTokenRepository;
+import com.grievance.repository.NotificationRepository;
+import com.grievance.repository.OtpCodeRepository;
 import com.grievance.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
@@ -45,6 +50,11 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
     private final EmailService emailService;
+    private final GrievanceUpvoteRepository upvoteRepository;
+    private final NotificationRepository notificationRepository;
+    private final OtpCodeRepository otpCodeRepository;
+    private final InviteTokenRepository inviteTokenRepository;
+    private final FeedbackRepository feedbackRepository;
 
     // ✅ REGISTER USER
     public UserResponse registerUser(RegisterRequest request) {
@@ -197,16 +207,44 @@ public class UserService {
         return convertToResponse(userRepository.save(user));
     }
 
-    // ✅ SOFT-DELETE USER
+    // ✅ PERMANENTLY DELETE USER (ADMIN ONLY)
     public void deleteUser(Long userId) {
+        deleteUser(userId, null);
+    }
+
+    public void deleteUser(Long userId, Long currentAdminId) {
+        if (currentAdminId != null && userId.equals(currentAdminId)) {
+            throw new BadRequestException("Administrators cannot delete their own account.");
+        }
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
-        user.setIsActive(false);
-        user.setDeactivatedAt(LocalDateTime.now());
-        returnOfficerTicketsToPool(user, "Officer account deleted by administrator");
-        userRepository.save(user);
-        log.info("User {} soft-deleted (deactivatedAt set)", userId);
+        log.info("Admin {} permanently deleting user account {} ({})",
+                currentAdminId, userId, user.getEmail());
+
+        // 1. If officer, return in-progress tickets to department pool
+        returnOfficerTicketsToPool(user, "Officer account removed by administrator");
+
+        // 2. Unassign officer from any remaining assigned grievances
+        grievanceRepository.findByAssignedOfficerOrderByCreatedAtDesc(user).forEach(g -> {
+            g.setAssignedOfficer(null);
+            grievanceRepository.save(g);
+        });
+
+        // 3. Clear user from audit history logs so audit trail is preserved
+        historyRepository.clearUserFromHistory(user);
+
+        // 4. Clean up upvotes, notifications, feedback, OTPs, and invites
+        upvoteRepository.deleteByUserId(userId);
+        notificationRepository.deleteByUserId(userId);
+        feedbackRepository.deleteByUser(user);
+        otpCodeRepository.deleteByEmail(user.getEmail());
+        inviteTokenRepository.deleteByEmail(user.getEmail());
+
+        // 5. Delete user from repository (submitted grievances cascade-delete)
+        userRepository.delete(user);
+        log.info("User {} ({}) successfully deleted from the system", userId, user.getEmail());
     }
 
     private void returnOfficerTicketsToPool(User officer, String reason) {

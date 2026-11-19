@@ -178,9 +178,10 @@ public class AdminController {
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        log.info("Deleting user: {}", id);
-        userService.deleteUser(id);
+    public ResponseEntity<?> deleteUser(@PathVariable Long id, Authentication authentication) {
+        Long currentAdminId = getUserId(authentication);
+        log.info("Admin {} deleting user: {}", currentAdminId, id);
+        userService.deleteUser(id, currentAdminId);
         return ResponseEntity.noContent().build();
     }
 

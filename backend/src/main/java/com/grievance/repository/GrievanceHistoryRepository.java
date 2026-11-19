@@ -26,4 +26,9 @@ public interface GrievanceHistoryRepository extends JpaRepository<GrievanceHisto
     // Find latest status change for a grievance
     @Query("SELECT gh FROM GrievanceHistory gh WHERE gh.grievance = :grievance ORDER BY gh.updatedAt DESC LIMIT 1")
     GrievanceHistory findLatestHistoryByGrievance(@Param("grievance") Grievance grievance);
+
+    // Nullify references to a user when deleted
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("UPDATE GrievanceHistory gh SET gh.updatedByUser = null WHERE gh.updatedByUser = :user")
+    void clearUserFromHistory(@Param("user") com.grievance.entity.User user);
 }

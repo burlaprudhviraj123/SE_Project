@@ -84,9 +84,10 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        log.info("Deleting user: {}", id);
-        userService.deleteUser(id);
+    public ResponseEntity<?> deleteUser(@PathVariable Long id, Authentication authentication) {
+        Long currentAdminId = getUserId(authentication);
+        log.info("Admin {} deleting user: {}", currentAdminId, id);
+        userService.deleteUser(id, currentAdminId);
         return ResponseEntity.noContent().build();
     }
 
@@ -129,5 +130,12 @@ public class UserController {
         log.info("Assigning department {} to user {}", deptId, id);
         UserResponse user = userService.assignDepartment(id, deptId);
         return ResponseEntity.ok(user);
+    }
+
+    private Long getUserId(Authentication authentication) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails)) {
+            throw new RuntimeException("User not authenticated properly");
+        }
+        return ((CustomUserDetails) authentication.getPrincipal()).getUserId();
     }
 }

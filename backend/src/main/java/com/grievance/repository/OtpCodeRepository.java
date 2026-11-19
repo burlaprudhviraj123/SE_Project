@@ -15,4 +15,8 @@ public interface OtpCodeRepository extends JpaRepository<OtpCode, Long> {
             String email, String purpose, LocalDateTime now);
 
     long countByEmailAndCreatedAtAfter(String email, LocalDateTime since);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("DELETE FROM OtpCode o WHERE o.email = :email")
+    void deleteByEmail(@org.springframework.data.repository.query.Param("email") String email);
 }

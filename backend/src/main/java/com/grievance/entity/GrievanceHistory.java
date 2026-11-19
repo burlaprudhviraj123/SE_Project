@@ -69,8 +69,8 @@ public class GrievanceHistory {
         return visibility;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "updated_by_user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by_user_id")
     private User updatedByUser;
 
     @CreationTimestamp

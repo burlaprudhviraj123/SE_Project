@@ -43,4 +43,8 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
     // Count feedback by rating value
     long countByRating(Integer rating);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("DELETE FROM Feedback f WHERE f.user = :user")
+    void deleteByUser(@Param("user") User user);
 }

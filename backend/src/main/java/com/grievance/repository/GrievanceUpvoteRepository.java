@@ -13,4 +13,8 @@ public interface GrievanceUpvoteRepository extends JpaRepository<GrievanceUpvote
     Optional<GrievanceUpvote> findByGrievanceIdAndUserId(Long grievanceId, Long userId);
     
     int countByGrievanceId(Long grievanceId);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query("DELETE FROM GrievanceUpvote gu WHERE gu.user.id = :userId")
+    void deleteByUserId(@org.springframework.data.repository.query.Param("userId") Long userId);
 }
