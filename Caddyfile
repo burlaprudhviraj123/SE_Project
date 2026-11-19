@@ -1,0 +1,11 @@
+{
+    email {$ACME_EMAIL:qu45694@gmail.com}
+}
+
+collegecomplaintmanagementsystem.centralindia.cloudapp.azure.com {
+    reverse_proxy frontend:80
+}
+
+http://20.235.241.151 {
+    redir https://collegecomplaintmanagementsystem.centralindia.cloudapp.azure.com{uri} permanent
+}

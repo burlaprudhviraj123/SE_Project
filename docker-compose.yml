@@ -61,9 +61,27 @@ services:
     depends_on:
       - backend
     ports:
-      - "80:80"
       - "5173:80"
       - "3000:80"
+    networks:
+      - app-network
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: smart-grievance-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:-collegecomplaintmanagementsystem.centralindia.cloudapp.azure.com}
+      ACME_EMAIL: ${ACME_EMAIL:-qu45694@gmail.com}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
     networks:
       - app-network
 
@@ -71,6 +89,10 @@ volumes:
   postgres_data:
     driver: local
   uploads_data:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
     driver: local
 
 networks:
