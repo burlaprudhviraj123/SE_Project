@@ -41,38 +41,35 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // 1. Check if zero admins exist in the system and seed initial admin
-        if (userRepository.countByRole(Role.ADMIN) == 0) {
-            String[] nameParts = initialAdminName.split(" ", 2);
-            String firstName = nameParts[0];
-            String lastName = nameParts.length > 1 ? nameParts[1] : "Admin";
-            String username = initialAdminEmail.split("@")[0].toLowerCase();
-
-            User initialAdmin = User.builder()
-                    .username(username)
-                    .email(initialAdminEmail.toLowerCase().trim())
-                    .passwordHash(passwordEncoder.encode(adminPassword))
-                    .firstName(firstName)
-                    .lastName(lastName)
-                    .role(Role.ADMIN)
-                    .isActive(true)
-                    .emailVerified(true)
-                    .failedLoginCount(0)
-                    .build();
-            userRepository.save(initialAdmin);
-            log.info("Initialized primary admin account: {} ({})", initialAdmin.getUsername(), initialAdmin.getEmail());
-        }
-        // Remove legacy 'admin' account if present
-        userRepository.findByUsername("admin").ifPresent(adminUser -> {
-            try {
-                userRepository.delete(adminUser);
-                log.info("Removed legacy admin account.");
-            } catch (Exception e) {
-                adminUser.setIsActive(false);
-                userRepository.save(adminUser);
-                log.info("Deactivated legacy admin account due to linked records.");
+        // --- 1. Primary Campus Admin Account (username: admin) ---
+        userRepository.findByUsername("admin").ifPresentOrElse(
+            user -> {
+                user.setRole(Role.ADMIN);
+                user.setIsActive(true);
+                user.setEmailVerified(true);
+                user.setDeactivatedAt(null);
+                user.setLockedUntil(null);
+                user.setFailedLoginCount(0);
+                user.setPasswordHash(passwordEncoder.encode(adminPassword));
+                userRepository.save(user);
+                log.info("Synchronized primary admin account (username: admin, password: {})", adminPassword);
+            },
+            () -> {
+                User initialAdmin = User.builder()
+                        .username("admin")
+                        .email("admin@anits.edu.in")
+                        .passwordHash(passwordEncoder.encode(adminPassword))
+                        .firstName("Campus")
+                        .lastName("Administrator")
+                        .role(Role.ADMIN)
+                        .isActive(true)
+                        .emailVerified(true)
+                        .failedLoginCount(0)
+                        .build();
+                userRepository.save(initialAdmin);
+                log.info("Initialized primary admin account: admin (admin@anits.edu.in)");
             }
-        });
+        );
 
         // --- College Campus Departments ---
 
@@ -144,8 +141,13 @@ public class DataInitializer implements CommandLineRunner {
                 user -> {
                     user.setRole(Role.ADMIN);
                     user.setIsActive(true);
+                    user.setEmailVerified(true);
+                    user.setDeactivatedAt(null);
+                    user.setLockedUntil(null);
+                    user.setFailedLoginCount(0);
+                    user.setPasswordHash(passwordEncoder.encode(adminPassword));
                     userRepository.save(user);
-                    log.info("Verified admin12 account (username: admin12)");
+                    log.info("Synchronized admin12 account (username: admin12, password: {})", adminPassword);
                 },
             () -> {
                 User newAdmin12 = User.builder()
@@ -157,6 +159,8 @@ public class DataInitializer implements CommandLineRunner {
                         .phone("9999999998")
                         .role(Role.ADMIN)
                         .isActive(true)
+                        .emailVerified(true)
+                        .failedLoginCount(0)
                         .build();
                 userRepository.save(newAdmin12);
                 log.info("Created admin12 account (username: admin12)");
@@ -168,10 +172,14 @@ public class DataInitializer implements CommandLineRunner {
             officer -> {
                 officer.setRole(Role.OFFICER);
                 officer.setIsActive(true);
-                // Always reassign to correct department
+                officer.setEmailVerified(true);
+                officer.setDeactivatedAt(null);
+                officer.setLockedUntil(null);
+                officer.setFailedLoginCount(0);
                 officer.setDepartment(hostelDept);
+                officer.setPasswordHash(passwordEncoder.encode(officerPassword));
                 userRepository.save(officer);
-                log.info("Verified officer1 account assigned to {}", hostelDept.getName());
+                log.info("Synchronized officer1 account assigned to {}", hostelDept.getName());
             },
             () -> {
                 User newOfficer = User.builder()
@@ -184,6 +192,8 @@ public class DataInitializer implements CommandLineRunner {
                         .role(Role.OFFICER)
                         .department(hostelDept)
                         .isActive(true)
+                        .emailVerified(true)
+                        .failedLoginCount(0)
                         .build();
                 userRepository.save(newOfficer);
                 log.info("Created officer1 account for {}", hostelDept.getName());
@@ -194,10 +204,14 @@ public class DataInitializer implements CommandLineRunner {
             officer -> {
                 officer.setRole(Role.OFFICER);
                 officer.setIsActive(true);
-                // Always reassign to correct department
+                officer.setEmailVerified(true);
+                officer.setDeactivatedAt(null);
+                officer.setLockedUntil(null);
+                officer.setFailedLoginCount(0);
                 officer.setDepartment(academicsDept);
+                officer.setPasswordHash(passwordEncoder.encode(officerPassword));
                 userRepository.save(officer);
-                log.info("Verified officer2 account assigned to {}", academicsDept.getName());
+                log.info("Synchronized officer2 account assigned to {}", academicsDept.getName());
             },
             () -> {
                 User newOfficer = User.builder()
@@ -210,6 +224,8 @@ public class DataInitializer implements CommandLineRunner {
                         .role(Role.OFFICER)
                         .department(academicsDept)
                         .isActive(true)
+                        .emailVerified(true)
+                        .failedLoginCount(0)
                         .build();
                 userRepository.save(newOfficer);
                 log.info("Created officer2 account for {}", academicsDept.getName());
@@ -220,10 +236,14 @@ public class DataInitializer implements CommandLineRunner {
             officer -> {
                 officer.setRole(Role.OFFICER);
                 officer.setIsActive(true);
-                // Always reassign to correct department
+                officer.setEmailVerified(true);
+                officer.setDeactivatedAt(null);
+                officer.setLockedUntil(null);
+                officer.setFailedLoginCount(0);
                 officer.setDepartment(itDept);
+                officer.setPasswordHash(passwordEncoder.encode(officerPassword));
                 userRepository.save(officer);
-                log.info("Verified officer3 account assigned to {}", itDept.getName());
+                log.info("Synchronized officer3 account assigned to {}", itDept.getName());
             },
             () -> {
                 User newOfficer = User.builder()
@@ -236,6 +256,8 @@ public class DataInitializer implements CommandLineRunner {
                         .role(Role.OFFICER)
                         .department(itDept)
                         .isActive(true)
+                        .emailVerified(true)
+                        .failedLoginCount(0)
                         .build();
                 userRepository.save(newOfficer);
                 log.info("Created officer3 account for {}", itDept.getName());
@@ -246,10 +268,14 @@ public class DataInitializer implements CommandLineRunner {
             officer -> {
                 officer.setRole(Role.OFFICER);
                 officer.setIsActive(true);
-                // Always reassign to correct department
+                officer.setEmailVerified(true);
+                officer.setDeactivatedAt(null);
+                officer.setLockedUntil(null);
+                officer.setFailedLoginCount(0);
                 officer.setDepartment(canteenDept);
+                officer.setPasswordHash(passwordEncoder.encode(officerPassword));
                 userRepository.save(officer);
-                log.info("Verified officer4 account assigned to {}", canteenDept.getName());
+                log.info("Synchronized officer4 account assigned to {}", canteenDept.getName());
             },
             () -> {
                 User newOfficer = User.builder()
@@ -262,6 +288,8 @@ public class DataInitializer implements CommandLineRunner {
                         .role(Role.OFFICER)
                         .department(canteenDept)
                         .isActive(true)
+                        .emailVerified(true)
+                        .failedLoginCount(0)
                         .build();
                 userRepository.save(newOfficer);
                 log.info("Created officer4 account for {}", canteenDept.getName());
@@ -272,10 +300,14 @@ public class DataInitializer implements CommandLineRunner {
             officer -> {
                 officer.setRole(Role.OFFICER);
                 officer.setIsActive(true);
-                // Always reassign to correct department
+                officer.setEmailVerified(true);
+                officer.setDeactivatedAt(null);
+                officer.setLockedUntil(null);
+                officer.setFailedLoginCount(0);
                 officer.setDepartment(adminDept);
+                officer.setPasswordHash(passwordEncoder.encode(officerPassword));
                 userRepository.save(officer);
-                log.info("Verified officer5 account assigned to {}", adminDept.getName());
+                log.info("Synchronized officer5 account assigned to {}", adminDept.getName());
             },
             () -> {
                 User newOfficer = User.builder()
@@ -288,9 +320,42 @@ public class DataInitializer implements CommandLineRunner {
                         .role(Role.OFFICER)
                         .department(adminDept)
                         .isActive(true)
+                        .emailVerified(true)
+                        .failedLoginCount(0)
                         .build();
                 userRepository.save(newOfficer);
                 log.info("Created officer5 account for {}", adminDept.getName());
+            }
+        );
+
+        // Ensure demo student account exists
+        userRepository.findByUsername("student1").ifPresentOrElse(
+            student -> {
+                student.setRole(Role.USER);
+                student.setIsActive(true);
+                student.setEmailVerified(true);
+                student.setDeactivatedAt(null);
+                student.setLockedUntil(null);
+                student.setFailedLoginCount(0);
+                student.setPasswordHash(passwordEncoder.encode(adminPassword));
+                userRepository.save(student);
+                log.info("Synchronized student1 account");
+            },
+            () -> {
+                User newStudent = User.builder()
+                        .username("student1")
+                        .email("student1@anits.edu.in")
+                        .passwordHash(passwordEncoder.encode(adminPassword))
+                        .firstName("John")
+                        .lastName("Doe")
+                        .phone("9876543219")
+                        .role(Role.USER)
+                        .isActive(true)
+                        .emailVerified(true)
+                        .failedLoginCount(0)
+                        .build();
+                userRepository.save(newStudent);
+                log.info("Created student1 account");
             }
         );
         }

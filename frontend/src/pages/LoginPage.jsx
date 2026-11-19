@@ -218,6 +218,39 @@ const LoginPage = () => {
               >
                 {loading ? "Signing in..." : "Sign In"}
               </Button>
+
+              {/* Quick Demo Access Credentials */}
+              <div className="pt-3 border-t border-line/60 space-y-2">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-ink-muted block text-center">
+                  Quick Demo Access (Click to Fill)
+                </span>
+                <div className="grid grid-cols-3 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => { setUsername('admin12'); setPassword('admin1234'); setLocalError(''); }}
+                    className="p-2 rounded-xl border border-line bg-paper/60 hover:bg-paper hover:border-accent text-center transition-colors cursor-pointer"
+                  >
+                    <span className="block text-[11px] font-mono font-bold text-accent">Admin</span>
+                    <span className="block text-[9px] text-ink-muted font-mono mt-0.5">admin12</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setUsername('officer1'); setPassword('officer1234'); setLocalError(''); }}
+                    className="p-2 rounded-xl border border-line bg-paper/60 hover:bg-paper hover:border-accent text-center transition-colors cursor-pointer"
+                  >
+                    <span className="block text-[11px] font-mono font-bold text-accent">Officer</span>
+                    <span className="block text-[9px] text-ink-muted font-mono mt-0.5">officer1</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setUsername('student1'); setPassword('admin1234'); setLocalError(''); }}
+                    className="p-2 rounded-xl border border-line bg-paper/60 hover:bg-paper hover:border-accent text-center transition-colors cursor-pointer"
+                  >
+                    <span className="block text-[11px] font-mono font-bold text-accent">Student</span>
+                    <span className="block text-[9px] text-ink-muted font-mono mt-0.5">student1</span>
+                  </button>
+                </div>
+              </div>
             </form>
           ) : (
             <DirectionalStepper currentStep={forgotStep} direction={forgotStepDirection}>
