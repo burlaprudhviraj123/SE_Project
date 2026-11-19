@@ -30,6 +30,7 @@ public class FeedbackService {
     private GrievanceRepository grievanceRepository;
     private UserRepository userRepository;
     private GrievanceAccessPolicy accessPolicy;
+    private NotificationService notificationService;
 
     public FeedbackResponse submitFeedback(Long userId, FeedbackRequest request) {
         log.info("Submitting feedback for grievance: {} by user: {}", request.getGrievanceId(), userId);
@@ -58,6 +59,17 @@ public class FeedbackService {
 
         Feedback saved = feedbackRepository.save(feedback);
         log.info("Feedback submitted for grievance: {}", saved.getId());
+
+        if (notificationService != null && grievance.getAssignedOfficer() != null) {
+            notificationService.sendNotification(
+                    grievance.getAssignedOfficer(),
+                    "Resolution Rating Received",
+                    "Student submitted a " + request.getRating() + "/5 rating on case #" + grievance.getGrievanceNumber() + ".",
+                    "/grievances/" + grievance.getId(),
+                    "FEEDBACK"
+            );
+        }
+
         return convertToResponse(saved);
     }
 

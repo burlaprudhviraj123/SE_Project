@@ -61,8 +61,9 @@ class GrievancePrivacyTest {
     private final FileStorageService storage = mock(FileStorageService.class);
     private final GrievanceUpvoteRepository upvotes = mock(GrievanceUpvoteRepository.class);
     private final GrievanceAccessPolicy policy = new GrievanceAccessPolicy(users);
+    private final NotificationService notifications = mock(NotificationService.class);
     private final GrievanceService service = new GrievanceService(grievances, histories, users,
-            departments, feedback, mock(EmailService.class), storage, new com.grievance.config.AppConfig().modelMapper(), upvotes, policy);
+            departments, feedback, mock(EmailService.class), storage, new com.grievance.config.AppConfig().modelMapper(), upvotes, policy, notifications);
     private final ObjectMapper json = new ObjectMapper().findAndRegisterModules();
     private final Department department = Department.builder().id(10L).name("Water").build();
     private final User owner = User.builder().id(1L).role(Role.USER).firstName("Private").lastName("Citizen").build();
@@ -237,7 +238,7 @@ class GrievancePrivacyTest {
 
     @Test
     void feedbackAndRatingDoNotBypassCaseAccess() {
-        FeedbackService feedbackService = new FeedbackService(feedback, grievances, users, policy);
+        FeedbackService feedbackService = new FeedbackService(feedback, grievances, users, policy, notifications);
         authenticate(stranger);
         assertThrows(AccessDeniedException.class, () -> feedbackService.getFeedbackByGrievance(20L));
         assertThrows(AccessDeniedException.class, () -> feedbackService.getAverageRatingForGrievance(20L));

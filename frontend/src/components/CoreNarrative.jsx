@@ -18,7 +18,6 @@ const tagConfig = [
 ];
 
 export default function CoreNarrative({ value, onChange, placeholder }) {
-  const [charCount, setCharCount] = useState(value.length);
   const [activeTemplate, setActiveTemplate] = useState(null);
   const textareaRef = useRef(null);
 
@@ -33,7 +32,6 @@ export default function CoreNarrative({ value, onChange, placeholder }) {
 
   useEffect(() => {
     adjustHeight();
-    setCharCount(value.length);
   }, [value]);
 
   const handleTextChange = (e) => {
@@ -56,6 +54,7 @@ export default function CoreNarrative({ value, onChange, placeholder }) {
     if (textareaRef.current) textareaRef.current.focus();
   };
 
+  const charCount = value.length;
   const isWarningRange = charCount > 900;
   const isLimitReached = charCount >= 1000;
 
@@ -89,8 +88,8 @@ export default function CoreNarrative({ value, onChange, placeholder }) {
             key={key}
             type="button"
             onClick={() => applyTemplate(key)}
-            className={`px-4 py-2 text-[11px] font-bold tracking-wide rounded-full border transition-all duration-200 transform active:scale-95 ${text} ${bg} ${border} ${
-              activeTemplate === key ? 'ring-2 ring-offset-1 scale-95 opacity-80' : ''
+            className={`px-4 py-2 text-[11px] font-bold tracking-wide rounded-full border transition-transform duration-100 ease-out active:scale-[0.97] ${text} ${bg} ${border} ${
+              activeTemplate === key ? 'ring-2 ring-offset-1 opacity-80' : ''
             }`}
           >
             {label}

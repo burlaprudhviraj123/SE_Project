@@ -3,15 +3,28 @@ import { useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginSuccess } from '../store/authSlice';
 import { registerStudent, verifyOtp } from '../lib/api';
+import { setThemeCleanly } from '../lib/theme';
+import { 
+  cleanPhoneNumber, 
+  validatePhoneNumber, 
+  cleanEmail, 
+  validateCollegeEmail, 
+  validateUsername, 
+  validateName, 
+  validatePassword,
+  cleanText
+} from '../lib/validation';
 import { Button } from "@/components/ui/button";
 import { Input, FloatingInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { DirectionalStepper, DirectionalStep } from "@/components/ui/directional-stepper";
 import { AlertCircle, CheckCircle2, ShieldCheck, Mail, ArrowLeft, KeySquare, Moon, Sun } from "lucide-react";
 
 const RegisterPage = () => {
   const [step, setStep] = useState('REGISTER'); // 'REGISTER' | 'VERIFY_OTP'
+  const [stepDirection, setStepDirection] = useState('forward');
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -39,13 +52,7 @@ const RegisterPage = () => {
   const toggleTheme = () => {
     const nextDark = !isDark;
     setIsDark(nextDark);
-    if (nextDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
+    setThemeCleanly(nextDark);
   };
 
   const handleChange = (e) => {
@@ -56,32 +63,39 @@ const RegisterPage = () => {
     }));
   };
 
+  const handleBlur = (e) => {
+    const { id, value } = e.target;
+    if (id === 'phoneNumber') {
+      const cleaned = cleanPhoneNumber(value);
+      if (cleaned) {
+        setFormData(prev => ({ ...prev, phoneNumber: cleaned }));
+      }
+    } else if (id === 'email') {
+      setFormData(prev => ({ ...prev, email: cleanEmail(value) }));
+    } else if (id === 'username' || id === 'firstName' || id === 'lastName') {
+      setFormData(prev => ({ ...prev, [id]: cleanText(value) }));
+    }
+  };
+
   const validateForm = () => {
-    if (!formData.username || !formData.email || !formData.password || !formData.confirmPassword || !formData.firstName || !formData.lastName || !formData.phoneNumber) {
-      return 'Please fill in all required fields';
-    }
-    const cleanEmail = formData.email.trim().toLowerCase();
-    if (!cleanEmail.endsWith('@anits.edu.in')) {
-      return 'Registration is restricted to ANITS college email addresses (@anits.edu.in)';
-    }
-    if (formData.username.length < 3) {
-      return 'Username must be at least 3 characters long';
-    }
-    if (formData.password.length < 8) {
-      return 'Password must be at least 8 characters long';
-    }
-    if (formData.password !== formData.confirmPassword) {
-      return 'Passwords do not match';
-    }
-    if (formData.firstName.length < 2) {
-      return 'First name must be at least 2 characters long';
-    }
-    if (formData.lastName.length < 2) {
-      return 'Last name must be at least 2 characters long';
-    }
-    if (!/^\d{10}$/.test(formData.phoneNumber)) {
-      return 'Phone number must be exactly 10 digits';
-    }
+    const firstNameCheck = validateName(formData.firstName, 'First Name');
+    if (!firstNameCheck.isValid) return firstNameCheck.error;
+
+    const lastNameCheck = validateName(formData.lastName, 'Last Name');
+    if (!lastNameCheck.isValid) return lastNameCheck.error;
+
+    const usernameCheck = validateUsername(formData.username);
+    if (!usernameCheck.isValid) return usernameCheck.error;
+
+    const emailCheck = validateCollegeEmail(formData.email);
+    if (!emailCheck.isValid) return emailCheck.error;
+
+    const passwordCheck = validatePassword(formData.password, formData.confirmPassword);
+    if (!passwordCheck.isValid) return passwordCheck.error;
+
+    const phoneCheck = validatePhoneNumber(formData.phoneNumber);
+    if (!phoneCheck.isValid) return phoneCheck.error;
+
     return '';
   };
 
@@ -95,19 +109,27 @@ const RegisterPage = () => {
       return;
     }
 
+    const firstNameCheck = validateName(formData.firstName, 'First Name');
+    const lastNameCheck = validateName(formData.lastName, 'Last Name');
+    const usernameCheck = validateUsername(formData.username);
+    const emailCheck = validateCollegeEmail(formData.email);
+    const phoneCheck = validatePhoneNumber(formData.phoneNumber);
+    const cleanAddress = cleanText(formData.address);
+
     setLoading(true);
     try {
       const response = await registerStudent({
-        username: formData.username.trim(),
-        email: formData.email.trim().toLowerCase(),
+        username: usernameCheck.value,
+        email: emailCheck.value,
         password: formData.password,
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
-        phoneNumber: formData.phoneNumber.trim(),
-        address: formData.address?.trim()
+        firstName: firstNameCheck.value,
+        lastName: lastNameCheck.value,
+        phoneNumber: phoneCheck.value,
+        address: cleanAddress
       });
       
-      setRegisteredEmail(response.data?.email || formData.email.trim().toLowerCase());
+      setRegisteredEmail(response.data?.email || emailCheck.value);
+      setStepDirection('forward');
       setStep('VERIFY_OTP');
     } catch (err) {
       console.error(err);
@@ -122,7 +144,8 @@ const RegisterPage = () => {
     e.preventDefault();
     setError('');
 
-    if (!otpCode || otpCode.trim().length !== 6) {
+    const cleanOtp = (otpCode || '').trim().replace(/\D/g, '');
+    if (cleanOtp.length !== 6) {
       setError('Please enter the complete 6-digit verification code.');
       return;
     }
@@ -130,8 +153,8 @@ const RegisterPage = () => {
     setLoading(true);
     try {
       const response = await verifyOtp({
-        email: registeredEmail,
-        otpCode: otpCode.trim()
+        email: cleanEmail(registeredEmail),
+        otpCode: cleanOtp
       });
 
       const { token, user } = response.data;
@@ -176,9 +199,10 @@ const RegisterPage = () => {
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="p-6 sm:p-8 space-y-5">
-          {step === 'REGISTER' ? (
-            <form onSubmit={handleRegisterSubmit} className="space-y-4">
+        <CardContent className="p-6 sm:p-8">
+          <DirectionalStepper currentStep={step} direction={stepDirection}>
+            <DirectionalStep step="REGISTER">
+              <form onSubmit={handleRegisterSubmit} className="space-y-4">
               {/* College domain notice banner */}
               <div className="p-4 bg-paper border border-line rounded-2xl text-xs text-ink-muted flex items-start gap-2.5">
                 <Mail className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
@@ -196,6 +220,7 @@ const RegisterPage = () => {
                   placeholder=" "
                   value={formData.firstName}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   required
                 />
                 <FloatingInput 
@@ -205,6 +230,7 @@ const RegisterPage = () => {
                   placeholder=" "
                   value={formData.lastName}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   required
                 />
               </div>
@@ -218,6 +244,7 @@ const RegisterPage = () => {
                   placeholder=" "
                   value={formData.username}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   required
                 />
                 <FloatingInput 
@@ -228,6 +255,7 @@ const RegisterPage = () => {
                   placeholder=" "
                   value={formData.email}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   required
                 />
               </div>
@@ -264,6 +292,7 @@ const RegisterPage = () => {
                 placeholder=" "
                 value={formData.phoneNumber}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 required
               />
 
@@ -294,7 +323,8 @@ const RegisterPage = () => {
                 {loading ? "Sending Verification Code..." : "Register & Receive Verification Code"}
               </Button>
             </form>
-          ) : (
+          </DirectionalStep>
+          <DirectionalStep step="VERIFY_OTP">
             <form onSubmit={handleOtpSubmit} className="space-y-4">
               <div className="p-4 bg-accent-dim border border-accent/20 rounded-2xl text-xs text-ink-muted space-y-1">
                 <p>
@@ -314,6 +344,7 @@ const RegisterPage = () => {
                   placeholder="000000"
                   value={otpCode}
                   onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                  error={Boolean(error)}
                   className="h-12 rounded-xl text-center text-2xl tracking-[0.5em] font-mono border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10 max-w-xs mx-auto"
                   autoFocus
                   required
@@ -337,13 +368,14 @@ const RegisterPage = () => {
 
               <button
                 type="button"
-                onClick={() => { setStep('REGISTER'); setError(''); }}
+                onClick={() => { setStepDirection('backward'); setStep('REGISTER'); setError(''); }}
                 className="w-full flex items-center justify-center gap-1.5 text-xs text-ink-muted hover:text-ink pt-1"
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Back to registration details
               </button>
             </form>
-          )}
+          </DirectionalStep>
+        </DirectionalStepper>
         </CardContent>
 
         <CardFooter className="pt-4 pb-6 border-t border-line flex justify-center bg-paper/30">

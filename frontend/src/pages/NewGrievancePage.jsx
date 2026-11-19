@@ -8,7 +8,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, Link as LinkIcon, Loader2, CheckCircle2, AlertCircle, FileText, ArrowRight, X } from "lucide-react";
+import { Upload, Link as LinkIcon, Loader2, CheckCircle2, AlertCircle, FileText, ArrowRight, X, Clock } from "lucide-react";
 import ConfirmDialog from '../components/ConfirmDialog';
 
 const departmentTemplates = {
@@ -167,7 +167,7 @@ const NewGrievancePage = () => {
   if (submittedGrievance) {
     return (
       <div className="min-h-[calc(100vh-4rem)] bg-paper py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-        <div className="w-full max-w-xl bg-surface border border-line rounded-3xl p-8 sm:p-10 shadow-sm animate-in fade-in duration-300">
+        <div aria-live="polite" className="w-full max-w-xl bg-surface border border-line rounded-3xl p-8 sm:p-10 shadow-sm animate-in fade-in duration-300">
           <div className="flex items-center gap-3 pb-6 border-b border-line">
             <div className="w-12 h-12 rounded-2xl bg-accent-dim flex items-center justify-center text-accent">
               <CheckCircle2 className="w-6 h-6" />
@@ -254,9 +254,10 @@ const NewGrievancePage = () => {
                 Submissions are logged into the college audit register and routed directly to the designated department nodal officer for redressal.
               </p>
             </div>
-            <div className="hidden sm:block text-right">
-              <span className="inline-block px-3.5 py-1.5 text-xs font-mono border border-line bg-paper text-ink/70 rounded-full shadow-xs">
-                SLA: 48h Resolution Window
+            <div className="hidden sm:flex sm:items-center shrink-0">
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-mono whitespace-nowrap border border-line bg-paper text-ink/75 rounded-full shadow-xs">
+                <Clock className="w-3.5 h-3.5 text-accent" />
+                <span>Response Target: 48h Window</span>
               </span>
             </div>
           </div>
@@ -275,11 +276,12 @@ const NewGrievancePage = () => {
               placeholder="e.g. Electrical fault in Lab 3 or Course registration portal discrepancy"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              aria-describedby="title-help"
               className="rounded-xl border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10 text-sm h-11 px-4"
               maxLength={150}
               required
             />
-            <p className="text-[11px] text-muted-foreground">
+            <p id="title-help" className="text-[11px] text-muted-foreground">
               Summarize the nature of the issue concisely (5 to 150 characters).
             </p>
           </div>
@@ -297,7 +299,7 @@ const NewGrievancePage = () => {
                 onValueChange={handleDepartmentChange}
                 required
               >
-                <SelectTrigger id="department" className="rounded-xl border-line bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB] text-sm h-11 px-4">
+                <SelectTrigger id="department" aria-describedby="department-help" className="rounded-xl border-line bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB] text-sm h-11 px-4">
                   <SelectValue placeholder={fetchingDeps ? "Loading departments..." : "Select College Department"} />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-line bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB] shadow-2xl">
@@ -308,7 +310,7 @@ const NewGrievancePage = () => {
                   ))}
                 </SelectContent>
               </Select>
-              <p className="text-[11px] text-muted-foreground">
+              <p id="department-help" className="text-[11px] text-muted-foreground">
                 Select the campus administrative or academic unit.
               </p>
             </div>
@@ -323,7 +325,7 @@ const NewGrievancePage = () => {
                 onValueChange={(val) => setFormData({ ...formData, priority: val })}
                 required
               >
-                <SelectTrigger id="priority" className="rounded-xl border-line bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB] text-sm h-11 px-4">
+                <SelectTrigger id="priority" aria-describedby="priority-help" className="rounded-xl border-line bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB] text-sm h-11 px-4">
                   <SelectValue placeholder="Select urgency" />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-line bg-white dark:bg-[#181C1F] text-ink dark:text-[#F2EFEB] shadow-2xl">
@@ -347,7 +349,7 @@ const NewGrievancePage = () => {
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-[11px] text-muted-foreground">
+              <p id="priority-help" className="text-[11px] text-muted-foreground">
                 Classify based on campus safety or academic deadlines.
               </p>
             </div>
@@ -359,7 +361,7 @@ const NewGrievancePage = () => {
               <Label htmlFor="description" className="text-xs font-sans font-semibold text-ink">
                 Detailed Statement of Grievance <span className="text-status-rejected">*</span>
               </Label>
-              <span className="text-[11px] font-mono text-muted-foreground">
+              <span id="description-count" className="text-[11px] font-mono text-muted-foreground" aria-live="polite">
                 {formData.description.length} / 5000 characters
               </span>
             </div>
@@ -369,10 +371,11 @@ const NewGrievancePage = () => {
               placeholder="State the facts clearly. Mention dates, classroom/hostel block numbers, faculty or staff involved, and specific impact on your academic or campus routine..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              aria-describedby="description-help description-count"
               className="w-full p-4 rounded-2xl border border-line bg-paper text-ink text-sm font-sans focus:border-accent focus:ring-2 focus:ring-accent/10 focus:outline-none leading-relaxed resize-y min-h-[140px]"
               required
             />
-            <p className="text-[11px] text-muted-foreground">
+            <p id="description-help" className="text-[11px] text-muted-foreground">
               Provide sufficient factual context to allow the nodal officer to investigate promptly without unnecessary back-and-forth.
             </p>
           </div>
@@ -383,10 +386,11 @@ const NewGrievancePage = () => {
               <Label className="text-xs font-sans font-semibold text-ink">
                 Supporting Documentation / Evidence (Optional)
               </Label>
-              <div className="flex border border-line bg-paper text-xs rounded-xl p-1 gap-1">
+              <div role="group" aria-label="Evidence type" className="flex border border-line bg-paper text-xs rounded-xl p-1 gap-1">
                 <button
                   type="button"
                   onClick={() => setEvidenceType('upload')}
+                  aria-pressed={evidenceType === 'upload'}
                   className={`px-3 py-1 font-medium text-xs transition-colors rounded-lg ${
                     evidenceType === 'upload'
                       ? 'bg-surface text-ink font-semibold shadow-xs'
@@ -398,6 +402,7 @@ const NewGrievancePage = () => {
                 <button
                   type="button"
                   onClick={() => setEvidenceType('link')}
+                  aria-pressed={evidenceType === 'link'}
                   className={`px-3 py-1 font-medium text-xs transition-colors rounded-lg ${
                     evidenceType === 'link'
                       ? 'bg-surface text-ink font-semibold shadow-xs'
@@ -429,6 +434,7 @@ const NewGrievancePage = () => {
                       variant="ghost"
                       size="sm"
                       onClick={clearAttachment}
+                      aria-label="Remove selected evidence"
                       className="text-status-rejected hover:bg-paper h-8 w-8 p-0 rounded-full"
                     >
                       <X className="w-4 h-4" />

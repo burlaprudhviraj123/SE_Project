@@ -38,6 +38,14 @@ import {
 } from "@/components/ui/card";
 import { getCurrentProfile, updateProfile, changePassword, getMyGrievances } from '../lib/api';
 import { updateUser } from '../store/authSlice';
+import { 
+  cleanPhoneNumber, 
+  validatePhoneNumber, 
+  cleanEmail, 
+  validateName, 
+  validatePassword, 
+  cleanText 
+} from '../lib/validation';
 
 const statusConfig = {
   PENDING: { label: 'Pending Review', dot: 'bg-[#B8862E]', badge: 'border-[#B8862E]/30 bg-[#B8862E]/10 text-[#B8862E]' },
@@ -158,18 +166,54 @@ const ProfilePage = () => {
 
   const onUpdateProfile = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setMessage({ type: '', text: '' });
+
+    const firstNameCheck = validateName(profileData.firstName, 'First Name');
+    if (!firstNameCheck.isValid) {
+      setMessage({ type: 'error', text: firstNameCheck.error });
+      return;
+    }
+
+    const lastNameCheck = validateName(profileData.lastName, 'Last Name');
+    if (!lastNameCheck.isValid) {
+      setMessage({ type: 'error', text: lastNameCheck.error });
+      return;
+    }
+
+    const cleanedEmail = cleanEmail(profileData.email);
+    if (!cleanedEmail) {
+      setMessage({ type: 'error', text: 'Email address is required' });
+      return;
+    }
+
+    const phoneCheck = validatePhoneNumber(profileData.phoneNumber);
+    if (!phoneCheck.isValid) {
+      setMessage({ type: 'error', text: phoneCheck.error });
+      return;
+    }
+
+    const cleanAddress = cleanText(profileData.address);
+
+    setLoading(true);
 
     try {
       const response = await updateProfile({
-        firstName: profileData.firstName,
-        lastName: profileData.lastName,
-        email: profileData.email,
-        phoneNumber: profileData.phoneNumber,
-        address: profileData.address
+        firstName: firstNameCheck.value,
+        lastName: lastNameCheck.value,
+        email: cleanedEmail,
+        phoneNumber: phoneCheck.value,
+        address: cleanAddress
       });
       dispatch(updateUser(response.data));
+      // Update local profile state with cleaned values
+      setProfileData(prev => ({
+        ...prev,
+        firstName: firstNameCheck.value,
+        lastName: lastNameCheck.value,
+        email: cleanedEmail,
+        phoneNumber: phoneCheck.value,
+        address: cleanAddress
+      }));
       setMessage({ type: 'success', text: 'Personal details updated successfully!' });
       setTimeout(() => setMessage({ type: '', text: '' }), 4000);
     } catch (error) {
@@ -184,12 +228,14 @@ const ProfilePage = () => {
 
   const onChangePassword = async (e) => {
     e.preventDefault();
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setPasswordMessage({ type: 'error', text: 'New passwords do not match!' });
+    const passCheck = validatePassword(passwordData.newPassword, passwordData.confirmPassword);
+    if (!passCheck.isValid) {
+      setPasswordMessage({ type: 'error', text: passCheck.error });
       return;
     }
-    if (passwordData.newPassword.length < 8) {
-      setPasswordMessage({ type: 'error', text: 'New password must be at least 8 characters long.' });
+
+    if (!passwordData.oldPassword) {
+      setPasswordMessage({ type: 'error', text: 'Current password is required' });
       return;
     }
 
@@ -290,7 +336,7 @@ const ProfilePage = () => {
         <div className="flex items-center gap-2 p-1.5 bg-surface border border-line rounded-2xl w-full sm:w-fit overflow-x-auto shadow-xs">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono font-medium transition-all shrink-0 ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono font-medium transition-all shrink-0 active:scale-[0.97] active:duration-100 active:ease-out ${
               activeTab === 'overview'
                 ? 'bg-accent text-white shadow-xs font-semibold'
                 : 'text-ink-muted hover:text-ink hover:bg-paper'
@@ -302,7 +348,7 @@ const ProfilePage = () => {
 
           <button
             onClick={() => setActiveTab('edit')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono font-medium transition-all shrink-0 ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono font-medium transition-all shrink-0 active:scale-[0.97] active:duration-100 active:ease-out ${
               activeTab === 'edit'
                 ? 'bg-accent text-white shadow-xs font-semibold'
                 : 'text-ink-muted hover:text-ink hover:bg-paper'
@@ -314,7 +360,7 @@ const ProfilePage = () => {
 
           <button
             onClick={() => setActiveTab('security')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono font-medium transition-all shrink-0 ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono font-medium transition-all shrink-0 active:scale-[0.97] active:duration-100 active:ease-out ${
               activeTab === 'security'
                 ? 'bg-accent text-white shadow-xs font-semibold'
                 : 'text-ink-muted hover:text-ink hover:bg-paper'
@@ -772,6 +818,7 @@ const ProfilePage = () => {
                         placeholder="Enter your current active password"
                         value={passwordData.oldPassword}
                         onChange={handlePasswordChange}
+                        error={passwordMessage.type === 'error'}
                         className="h-11 px-4 rounded-xl border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10 text-sm"
                         required
                       />
@@ -789,6 +836,7 @@ const ProfilePage = () => {
                           placeholder="Min 8 characters"
                           value={passwordData.newPassword}
                           onChange={handlePasswordChange}
+                          error={passwordMessage.type === 'error'}
                           className="h-11 px-4 rounded-xl border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10 text-sm"
                           required
                         />
@@ -804,6 +852,7 @@ const ProfilePage = () => {
                           placeholder="Repeat new password"
                           value={passwordData.confirmPassword}
                           onChange={handlePasswordChange}
+                          error={passwordMessage.type === 'error'}
                           className="h-11 px-4 rounded-xl border-line bg-paper text-ink focus:border-accent focus:ring-2 focus:ring-accent/10 text-sm"
                           required
                         />

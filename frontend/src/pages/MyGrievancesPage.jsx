@@ -141,17 +141,17 @@ export default function MyGrievancesPage() {
         </div>
 
         {/* Grievances List */}
-        <div className="space-y-3">
+        <div className="space-y-4 sm:space-y-5">
           {loading ? (
-            <div className="py-20 text-center text-xs text-muted-foreground bg-white dark:bg-[#1A1D20] border border-[#E4E0D8] dark:border-[#2A2E33] rounded-2xl shadow-sm">
-              <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-[#2B5D4F]" />
-              <p className="font-mono">Loading your grievance register...</p>
+            <div className="py-24 text-center text-xs text-muted-foreground bg-white dark:bg-[#1A1D20] border border-[#E4E0D8] dark:border-[#2A2E33] rounded-2xl shadow-sm">
+              <Loader2 className="w-7 h-7 animate-spin mx-auto mb-3 text-[#2B5D4F]" />
+              <p className="font-mono text-sm">Loading your grievance register...</p>
             </div>
           ) : filteredGrievances.length === 0 ? (
-            <div className="py-16 text-center text-muted-foreground bg-white dark:bg-[#1A1D20] border border-dashed border-[#E4E0D8] dark:border-[#2A2E33] rounded-2xl p-8 space-y-3">
-              <Inbox className="w-10 h-10 text-muted-foreground/40 mx-auto" />
-              <h3 className="font-serif font-bold text-base text-foreground">No Grievances Found</h3>
-              <p className="text-xs text-muted-foreground max-w-sm mx-auto font-sans">
+            <div className="py-20 text-center text-muted-foreground bg-white dark:bg-[#1A1D20] border border-dashed border-[#E4E0D8] dark:border-[#2A2E33] rounded-2xl p-10 space-y-4">
+              <Inbox className="w-12 h-12 text-muted-foreground/40 mx-auto" />
+              <h3 className="font-serif font-bold text-lg text-foreground">No Grievances Found</h3>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto font-sans leading-relaxed">
                 No formal grievances match your current search or status filter.
               </p>
               <Button
@@ -172,16 +172,16 @@ export default function MyGrievancesPage() {
                 <div
                   key={g.id}
                   onClick={() => navigate(`/grievances/${g.id}`)}
-                  className="p-5 bg-white dark:bg-[#1A1D20] border border-[#E4E0D8]/90 dark:border-[#2A2E33]/90 rounded-2xl hover:border-[#2B5D4F]/40 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
+                  className="p-6 sm:p-7 bg-white dark:bg-[#1A1D20] border border-[#E4E0D8]/90 dark:border-[#2A2E33]/90 rounded-2xl hover:border-[#2B5D4F]/40 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-5 group"
                 >
                   {/* Left Column: Details */}
-                  <div className="space-y-1.5 flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 text-xs">
-                      <span className="font-mono font-bold text-[#1C2024] dark:text-[#FAF9F6]">
+                  <div className="space-y-2 flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2.5 text-xs">
+                      <span className="font-mono font-bold text-[#1C2024] dark:text-[#FAF9F6] bg-[#FAF9F6] dark:bg-[#202428] px-2 py-0.5 rounded-lg border border-[#E4E0D8] dark:border-[#2A2E33]">
                         {g.ticketNumber || `#GRV-${String(g.id).padStart(4, '0')}`}
                       </span>
                       <span className="text-muted-foreground/40">•</span>
-                      <div className="inline-flex items-center gap-1 text-muted-foreground font-sans text-xs">
+                      <div className="inline-flex items-center gap-1.5 text-muted-foreground font-sans text-xs">
                         <Building2 className="w-3.5 h-3.5 text-[#2B5D4F]" />
                         <span>{g.departmentName || 'General Dept'}</span>
                       </div>
@@ -191,28 +191,28 @@ export default function MyGrievancesPage() {
                       </span>
                     </div>
 
-                    <h2 className="font-serif font-bold text-base text-[#1C2024] dark:text-[#FAF9F6] group-hover:text-[#2B5D4F] dark:group-hover:text-[#7EB5A6] transition-colors truncate">
+                    <h2 className="font-serif font-bold text-lg text-[#1C2024] dark:text-[#FAF9F6] group-hover:text-[#2B5D4F] dark:group-hover:text-[#7EB5A6] transition-colors truncate pt-1">
                       {g.title}
                     </h2>
 
-                    <p className="text-xs text-muted-foreground line-clamp-1 font-sans leading-relaxed">
+                    <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 font-sans leading-relaxed">
                       {g.description}
                     </p>
                   </div>
 
                   {/* Right Column: Status & Urgency */}
-                  <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#E4E0D8] dark:border-[#2A2E33]">
+                  <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-[#E4E0D8] dark:border-[#2A2E33]">
                     
                     {/* Status Pill */}
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium border ${statusInfo.badge}`}>
+                    <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono font-medium border ${statusInfo.badge}`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.dot}`} />
                       {statusInfo.label}
                     </span>
 
                     {/* Urgency and Navigation */}
                     <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
-                      <span className="text-[11px]">{priorityInfo.label}</span>
-                      <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-[#2B5D4F] group-hover:translate-x-0.5 transition-all" />
+                      <span className="text-xs font-medium">{priorityInfo.label}</span>
+                      <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-[#2B5D4F] group-hover:translate-x-1 transition-all" />
                     </div>
 
                   </div>

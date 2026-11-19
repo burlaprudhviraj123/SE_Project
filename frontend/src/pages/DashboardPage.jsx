@@ -497,13 +497,13 @@ const DashboardPage = () => {
             </p>
           </div>
           
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className={`grid w-full grid-cols-1 gap-2.5 sm:grid-cols-2 md:w-[31rem] ${isAdmin ? '' : 'md:w-auto'}`}>
             {isAdmin && (
               <>
                 <Button 
                   variant="outline"
                   onClick={() => setUsersDialogOpen(true)}
-                  className="h-10 px-4 gap-2 border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] hover:bg-[#FAF9F6] dark:hover:bg-[#202428] text-[#1C2024] dark:text-[#FAF9F6] shadow-sm font-mono text-xs font-medium rounded-xl"
+                  className="h-10 w-full px-4 gap-2 border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] hover:bg-[#FAF9F6] dark:hover:bg-[#202428] text-[#1C2024] dark:text-[#FAF9F6] shadow-sm font-mono text-xs font-medium rounded-xl"
                 >
                   <Users className="w-4 h-4 text-[#2B5D4F] dark:text-[#7EB5A6]" />
                   <span>Staff & Users</span>
@@ -511,12 +511,12 @@ const DashboardPage = () => {
                 <Button 
                   variant="outline"
                   onClick={() => setDeptDialogOpen(true)}
-                  className="h-10 px-4 gap-2 border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] hover:bg-[#FAF9F6] dark:hover:bg-[#202428] text-[#1C2024] dark:text-[#FAF9F6] shadow-sm font-mono text-xs font-medium rounded-xl"
+                  className="h-10 w-full px-4 gap-2 border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] hover:bg-[#FAF9F6] dark:hover:bg-[#202428] text-[#1C2024] dark:text-[#FAF9F6] shadow-sm font-mono text-xs font-medium rounded-xl"
                 >
                   <Building2 className="w-4 h-4 text-[#2B5D4F] dark:text-[#7EB5A6]" />
                   <span>Departments</span>
                 </Button>
-                <InviteStaffDialog onInviteSuccess={() => setRefreshKey(Date.now())} />
+                <InviteStaffDialog triggerClassName="w-full" onInviteSuccess={() => setRefreshKey(Date.now())} />
                 <AdminDepartmentsDialog
                   isOpen={deptDialogOpen}
                   onClose={() => setDeptDialogOpen(false)}
@@ -530,7 +530,7 @@ const DashboardPage = () => {
               </>
             )}
             <Button 
-              className="h-10 px-5 gap-2 bg-[#2B5D4F] hover:bg-[#234A3F] text-white shadow-sm font-mono text-xs font-medium rounded-xl transition-all"
+              className="h-10 w-full px-5 gap-2 bg-[#2B5D4F] hover:bg-[#234A3F] text-white shadow-sm font-mono text-xs font-medium rounded-xl transition-all"
               onClick={() => navigate(isAdmin ? '/recent-grievances' : '/grievances/new')}
             >
               {isAdmin ? (
@@ -547,10 +547,10 @@ const DashboardPage = () => {
 
         {/* SLA Breach Alert Banner */}
         {isAdmin && escalatedCount > 0 && !alertDismissed && (
-          <Alert className="rounded-2xl border border-[#9B4A3F]/30 bg-[#9B4A3F]/10 text-[#9B4A3F] flex items-start gap-3 p-4 relative animate-in fade-in duration-300">
-            <AlertTriangle className="h-5 w-5 text-[#9B4A3F] shrink-0 mt-0.5" />
+          <Alert className="rounded-2xl border border-[#2B5D4F]/30 bg-[#2B5D4F]/10 text-[#2B5D4F] dark:text-[#7EB5A6] flex items-start gap-3 p-4 relative animate-in fade-in duration-300">
+            <AlertTriangle className="h-5 w-5 text-[#2B5D4F] dark:text-[#7EB5A6] shrink-0 mt-0.5" />
             <div className="flex-1">
-              <AlertTitle className="text-xs font-mono font-bold uppercase tracking-wider text-[#9B4A3F]">
+              <AlertTitle className="text-xs font-mono font-bold uppercase tracking-wider text-[#2B5D4F] dark:text-[#7EB5A6]">
                 SLA Breached Tickets Warning
               </AlertTitle>
               <AlertDescription className="text-xs text-foreground/90 font-sans mt-0.5">
@@ -559,7 +559,7 @@ const DashboardPage = () => {
             </div>
             <button 
               onClick={() => setAlertDismissed(true)} 
-              className="p-1 rounded-lg hover:bg-[#9B4A3F]/20 text-[#9B4A3F] transition-colors"
+              className="p-1 rounded-lg hover:bg-[#2B5D4F]/20 text-[#2B5D4F] dark:text-[#7EB5A6] transition-colors"
             >
               <X className="h-4 w-4" />
             </button>
@@ -567,22 +567,22 @@ const DashboardPage = () => {
         )}
 
         {/* Stats Cards (4 KPIs) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="route-stagger grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
           
           {/* Card 1: Escalated */}
-          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-[#9B4A3F]/40 transition-all duration-300">
+          <div className="route-card border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md hover:border-[#2B5D4F]/40 transition-all duration-300">
             <div className="flex items-center justify-between pb-3">
               <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Escalated Cases</span>
-              <div className="p-2.5 rounded-xl bg-[#9B4A3F]/10 text-[#9B4A3F]">
+              <div className="p-2.5 rounded-xl bg-[#2B5D4F]/10 text-[#2B5D4F] dark:text-[#7EB5A6]">
                 <AlertCircle className="h-4 w-4" />
               </div>
             </div>
             <div className="flex items-baseline justify-between">
-              <div className="text-3xl font-mono font-bold tracking-tight text-[#9B4A3F]">
+              <div className="text-3xl font-mono font-bold tracking-tight text-[#2B5D4F] dark:text-[#7EB5A6]">
                 <RollingNumber value={escalatedCount} />
               </div>
               {isAdmin && escalatedCount > 0 && (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#9B4A3F]/10 text-[#9B4A3F] border border-[#9B4A3F]/20">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#2B5D4F]/10 text-[#2B5D4F] dark:text-[#7EB5A6] border border-[#2B5D4F]/20">
                   Critical
                 </span>
               )}
@@ -591,7 +591,7 @@ const DashboardPage = () => {
           </div>
 
           {/* Card 2: Resolved */}
-          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-[#3F6B4A]/40 transition-all duration-300">
+          <div className="route-card border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md hover:border-[#3F6B4A]/40 transition-all duration-300">
             <div className="flex items-center justify-between pb-3">
               <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Resolved</span>
               <div className="p-2.5 rounded-xl bg-[#3F6B4A]/10 text-[#3F6B4A]">
@@ -612,7 +612,7 @@ const DashboardPage = () => {
           </div>
 
           {/* Card 3: In Progress */}
-          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-[#2B5D4F]/40 transition-all duration-300">
+          <div className="route-card border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md hover:border-[#2B5D4F]/40 transition-all duration-300">
             <div className="flex items-center justify-between pb-3">
               <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">In Progress</span>
               <div className="p-2.5 rounded-xl bg-[#2B5D4F]/10 text-[#2B5D4F] dark:text-[#7EB5A6]">
@@ -635,7 +635,7 @@ const DashboardPage = () => {
           </div>
 
           {/* Card 4: Pending */}
-          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-[#B8862E]/40 transition-all duration-300">
+          <div className="route-card border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md hover:border-[#B8862E]/40 transition-all duration-300">
             <div className="flex items-center justify-between pb-3">
               <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Pending</span>
               <div className="p-2.5 rounded-xl bg-[#B8862E]/10 text-[#B8862E]">
@@ -661,14 +661,14 @@ const DashboardPage = () => {
         {/* Charts Section */}
         <div className="grid gap-6 md:grid-cols-2">
           {/* Department Workload */}
-          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 shadow-sm space-y-4">
+          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
             <div className="border-b border-[#E4E0D8] dark:border-[#2A2E33] pb-4">
               <h3 className="font-serif font-bold text-lg text-[#1C2024] dark:text-[#FAF9F6] flex items-center gap-2">
                 <Building2 className="h-5 w-5 text-[#2B5D4F]" /> Department Workload
               </h3>
               <p className="text-xs text-muted-foreground font-sans mt-0.5">Active cases distributed across departmental nodes</p>
             </div>
-            <div className="h-[280px]">
+            <div className="h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart 
                   layout="vertical" 
@@ -709,14 +709,14 @@ const DashboardPage = () => {
           </div>
 
           {/* Resolution Trend */}
-          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 shadow-sm space-y-4">
+          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 sm:p-7 shadow-sm space-y-5">
             <div className="border-b border-[#E4E0D8] dark:border-[#2A2E33] pb-4">
               <h3 className="font-serif font-bold text-lg text-[#1C2024] dark:text-[#FAF9F6] flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-[#2B5D4F]" /> Resolution Velocity
               </h3>
               <p className="text-xs text-muted-foreground font-sans mt-0.5">Daily comparison of new reports vs resolved cases (7 days)</p>
             </div>
-            <div className="h-[280px]">
+            <div className="h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart 
                   data={resolutionTrendData}

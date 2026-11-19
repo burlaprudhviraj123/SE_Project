@@ -131,7 +131,7 @@ export default function RecentGrievancesPage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {result.content.map((summary) => {
               const statusInfo = statusDotColors[summary.status] || { dot: 'bg-muted-foreground', badge: 'border-border text-muted-foreground' };
               const formattedStatus = summary.status ? summary.status.replace(/_/g, ' ') : 'PENDING';
@@ -139,7 +139,7 @@ export default function RecentGrievancesPage() {
               return (
                 <div
                   key={summary.publicId}
-                  className="p-6 bg-white dark:bg-[#1A1D20] border border-[#E4E0D8]/90 dark:border-[#2A2E33]/90 rounded-2xl space-y-3.5 hover:border-[#2B5D4F]/40 shadow-sm hover:shadow-md transition-all"
+                  className="p-7 sm:p-8 bg-white dark:bg-[#1A1D20] border border-[#E4E0D8]/90 dark:border-[#2A2E33]/90 rounded-2xl space-y-4.5 hover:border-[#2B5D4F]/40 shadow-sm hover:shadow-md hover-lift transition-all"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
                     <span className="flex items-center gap-1.5 font-medium text-[#2B5D4F] dark:text-[#7EB5A6]">
@@ -149,16 +149,16 @@ export default function RecentGrievancesPage() {
                     <span className="text-muted-foreground">{formatDate(summary.createdDate)}</span>
                   </div>
 
-                  <h2 className="text-lg font-serif font-bold text-[#1C2024] dark:text-[#FAF9F6] leading-snug">
+                  <h2 className="text-xl font-serif font-bold text-[#1C2024] dark:text-[#FAF9F6] leading-snug">
                     {summary.publicTitle}
                   </h2>
 
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed font-sans whitespace-pre-wrap">
+                  <p className="text-sm text-muted-foreground leading-relaxed font-sans whitespace-pre-wrap">
                     {summary.publicSummary}
                   </p>
 
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#E4E0D8] dark:border-[#2A2E33]">
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium border ${statusInfo.badge}`}>
+                  <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-[#E4E0D8] dark:border-[#2A2E33]">
+                    <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono font-medium border ${statusInfo.badge}`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.dot}`} />
                       {formattedStatus}
                     </span>
@@ -169,7 +169,7 @@ export default function RecentGrievancesPage() {
                       aria-label={`Upvote: ${summary.publicTitle}`}
                       disabled={votingIds.includes(summary.publicId)}
                       onClick={() => toggleUpvote(summary.publicId)}
-                      className={`rounded-full h-8 px-3.5 text-xs font-mono gap-1.5 transition-all ${
+                      className={`rounded-full h-9 px-4 text-xs font-mono gap-1.5 transition-all ${
                         summary.hasUpvoted
                           ? 'bg-[#2B5D4F]/10 text-[#2B5D4F] dark:text-[#7EB5A6] border-[#2B5D4F]/30 font-medium'
                           : 'border-[#E4E0D8] dark:border-[#2A2E33] hover:bg-[#FAF9F6] dark:hover:bg-[#202428]'

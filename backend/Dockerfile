@@ -1,3 +1,4 @@
+
 # ==========================================
 # Build Stage (Multi-Arch: AMD64 & ARM64)
 # ==========================================
@@ -8,17 +9,15 @@ WORKDIR /build
 COPY pom.xml ./
 COPY src ./src
 
-# Build JAR with dependencies
 RUN mvn clean package -DskipTests
 
 # ==========================================
-# Runtime Stage (Multi-Arch: AMD64 & ARM64)
+# Runtime Stage
 # ==========================================
 FROM eclipse-temurin:17-jre-jammy
 
 WORKDIR /app
 
-# Create non-root user and uploads directory
 RUN groupadd -r appgroup && useradd -r -g appgroup appuser && \
     mkdir -p /app/uploads && \
     chown -R appuser:appgroup /app
@@ -29,7 +28,8 @@ USER appuser
 
 ENV SERVER_PORT=8081 \
     SPRING_PROFILES_ACTIVE=dev \
-    UPLOAD_DIR=/app/uploads/
+    UPLOAD_DIR=/app/uploads/ \
+    JAVA_TOOL_OPTIONS="-Xms64m -Xmx256m -XX:+UseSerialGC -XX:MaxMetaspaceSize=160m -Xss512k -XX:ActiveProcessorCount=2"
 
 EXPOSE 8081
 

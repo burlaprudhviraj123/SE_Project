@@ -178,7 +178,7 @@ const AdminGrievancesPage = () => {
                 variant="outline" 
                 size="sm" 
                 disabled={loading || Boolean(error) || page + 1 >= result.totalPages} 
-                onClick={() => setPage(previous => previous - 1)}
+                onClick={() => setPage(previous => previous + 1)}
                 className="border-line bg-surface text-ink hover:bg-paper text-xs font-mono"
               >
                 Next <ChevronRight className="h-3.5 w-3.5 ml-1" />

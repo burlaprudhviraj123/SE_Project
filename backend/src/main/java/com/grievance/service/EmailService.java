@@ -53,14 +53,17 @@ public class EmailService {
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(mailFrom);
+            String from = (mailFrom != null && !mailFrom.isBlank() && !mailFrom.contains("grievance-system.com")) 
+                    ? mailFrom 
+                    : mailUsername;
+            message.setFrom(from);
             message.setTo(recipientEmail);
             message.setSubject(subject);
             message.setText(content);
             mailSender.send(message);
             log.info("✅ Live email successfully dispatched to: {}", recipientEmail);
         } catch (Exception e) {
-            log.warn("⚠️ SMTP Dispatch skipped/failed for <{}>: {} (Check credentials in application.properties)", recipientEmail, e.getMessage());
+            log.error("❌ SMTP Dispatch failed for <{}>: {}", recipientEmail, e.getMessage(), e);
         }
     }
 

@@ -8,7 +8,7 @@ import { AlertCircle, CheckCircle2, Copy, Mail, UserPlus } from "lucide-react";
 import api, { inviteStaff, getAdminDepartments } from '@/lib/api';
 import { toast } from "sonner";
 
-export const InviteStaffDialog = ({ onInviteSuccess }) => {
+export const InviteStaffDialog = ({ onInviteSuccess, triggerClassName = '' }) => {
   const [open, setOpen] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -87,7 +87,7 @@ export const InviteStaffDialog = ({ onInviteSuccess }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="h-10 text-xs font-mono font-medium gap-2 border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] hover:bg-[#FAF9F6] dark:hover:bg-[#202428] text-[#1C2024] dark:text-[#FAF9F6] rounded-xl shadow-sm">
+        <Button variant="outline" className={`h-10 text-xs font-mono font-medium gap-2 border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] hover:bg-[#FAF9F6] dark:hover:bg-[#202428] text-[#1C2024] dark:text-[#FAF9F6] rounded-xl shadow-sm ${triggerClassName}`}>
           <UserPlus className="w-4 h-4 text-[#2B5D4F] dark:text-[#7EB5A6]" />
           <span>Invite Staff</span>
         </Button>

@@ -489,7 +489,7 @@ const GrievanceDetailsPage = () => {
                               key={star}
                               type="button"
                               onClick={() => setFeedbackRating(star)}
-                              className="focus:outline-none transition-transform active:scale-95 p-1"
+                              className="focus:outline-none transition-transform duration-100 ease-out active:scale-[0.97] p-1"
                             >
                               <Star
                                 className={cn(

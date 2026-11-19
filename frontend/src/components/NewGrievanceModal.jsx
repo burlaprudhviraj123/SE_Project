@@ -322,7 +322,7 @@ const NewGrievanceModal = ({ isOpen, onClose, onSuccess }) => {
                 <Button 
                   type="submit" 
                   disabled={loading}
-                  className="w-full h-12 text-sm font-black uppercase tracking-[0.2em] bg-gradient-to-r from-cyan-400 to-blue-600 hover:from-cyan-300 hover:to-blue-500 text-white border-none shadow-[0_0_15px_rgba(34,211,238,0.3)] hover:shadow-[0_0_25px_rgba(34,211,238,0.5)] transform transition-active active:scale-[0.98] disabled:opacity-50"
+                  className="w-full h-12 text-sm font-black uppercase tracking-[0.2em] bg-gradient-to-r from-cyan-400 to-blue-600 hover:from-cyan-300 hover:to-blue-500 text-white border-none shadow-[0_0_15px_rgba(34,211,238,0.3)] hover:shadow-[0_0_25px_rgba(34,211,238,0.5)] transition-transform duration-100 ease-out active:scale-[0.97] disabled:opacity-50"
                 >
                   {loading ? (
                     <div className="flex items-center gap-2">

@@ -56,7 +56,7 @@ const ConfirmDialog = ({
       
       {/* Modal Card */}
       <Card 
-        className="relative z-10 my-auto w-full max-w-md border-none shadow-2xl ring-1 ring-border bg-card/95 backdrop-blur-md animate-in zoom-in-95 duration-200 rounded-[2rem] overflow-hidden"
+        className="relative z-10 my-auto w-full max-w-md border-none shadow-2xl ring-1 ring-border bg-card/95 backdrop-blur-md animate-in zoom-in-95 duration-200 rounded-[2rem] overflow-hidden composited-layer will-change-transform"
         onClick={(e) => e.stopPropagation()}
       >
         <div className={`h-1.5 w-full ${config.bg.replace('/10', '')}`} />

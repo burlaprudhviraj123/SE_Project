@@ -6,10 +6,13 @@
 @tailwind utilities;
 
 @layer base {
+  html, :root {
+    interpolate-size: allow-keywords;
+  }
   .theme {
     --font-heading: 'Lora', serif;
-    --font-sans: 'Inter', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    --font-sans: 'Geist Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
   :root {
     --background: #FAF9F6;
@@ -80,13 +83,27 @@
   body {
     background-color: var(--background);
     color: var(--foreground);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3, .font-editorial {
     font-family: 'Lora', Georgia, serif;
     letter-spacing: -0.015em;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--primary) 24%, transparent);
+    color: var(--foreground);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+
+  button, a, input, select, textarea, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -96,7 +113,7 @@
 @keyframes pageFadeInUp {
   0% {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(5px);
   }
   100% {
     opacity: 1;
@@ -114,8 +131,39 @@
 }
 
 .page-enter-animation {
-  animation: pageFadeInUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: pageFadeInUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+@keyframes routeCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* Navigation should reveal a destination in reading order, not animate every
+   surface independently. Apply `route-stagger` to a card/list group. */
+.page-enter-animation [data-slot="card"] {
+  animation: routeCardIn 300ms cubic-bezier(0.16, 1, 0.3, 1) 60ms both;
+}
+
+.route-stagger > .route-card,
+.route-stagger > [data-slot="card"] {
+  animation: routeCardIn 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.route-stagger > :nth-child(1) { animation-delay: 40ms; }
+.route-stagger > :nth-child(2) { animation-delay: 85ms; }
+.route-stagger > :nth-child(3) { animation-delay: 130ms; }
+.route-stagger > :nth-child(4) { animation-delay: 175ms; }
+.route-stagger > :nth-child(5) { animation-delay: 220ms; }
+.route-stagger > :nth-child(n + 6) { animation-delay: 240ms; }
 
 /* Native Browser View Transitions */
 ::view-transition-old(root) {
@@ -126,7 +174,7 @@
   animation: 260ms cubic-bezier(0.16, 1, 0.3, 1) both pageFadeInUp;
 }
 
-/* Card subtle lift on hover */
+/* Card subtle lift on hover and tactile press compression */
 .hover-lift {
   transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -136,23 +184,151 @@
   box-shadow: 0 10px 24px -6px rgba(28, 32, 36, 0.06), 0 4px 8px -4px rgba(28, 32, 36, 0.04);
 }
 
+/* 1. Tactile Press States: Active scale down to 0.97 with immediate 100ms ease-out */
+.hover-lift:active {
+  transform: translateY(-1px) !important;
+  transition: transform 100ms ease-out !important;
+}
+
+/* ============================================================
+   2. MULTI-SENSORY INPUT ERROR SHAKE & BORDER PULSE
+   Rapid horizontal shake (-6px to +6px decaying ~300ms) with red pulse
+   ============================================================ */
+@keyframes inputShakeDecay {
+  0% { transform: translateX(0); }
+  15% { transform: translateX(-6px); }
+  30% { transform: translateX(6px); }
+  45% { transform: translateX(-4px); }
+  60% { transform: translateX(4px); }
+  75% { transform: translateX(-2px); }
+  90% { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes inputBorderPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(155, 74, 63, 0.7);
+    border-color: var(--destructive);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(155, 74, 63, 0.25);
+    border-color: var(--destructive);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(155, 74, 63, 0);
+    border-color: var(--destructive);
+  }
+}
+
+.animate-input-shake {
+  animation: inputShakeDecay 300ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both,
+             inputBorderPulse 500ms ease-out both !important;
+  border-color: var(--destructive) !important;
+  will-change: transform;
+}
+
+/* ============================================================
+   3. DIRECTIONAL STEPPER SLIDING & SPRING SETTLING
+   ============================================================ */
+@keyframes stepSlideInForward {
+  0% {
+    transform: translateX(80px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes stepSlideOutForward {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-80px);
+    opacity: 0;
+  }
+}
+
+@keyframes stepSlideInBackward {
+  0% {
+    transform: translateX(-80px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes stepSlideOutBackward {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(80px);
+    opacity: 0;
+  }
+}
+
+.animate-step-in-forward {
+  animation: stepSlideInForward 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+.animate-step-out-forward {
+  animation: stepSlideOutForward 240ms cubic-bezier(0.4, 0, 1, 1) both;
+  will-change: transform, opacity;
+}
+
+.animate-step-in-backward {
+  animation: stepSlideInBackward 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+.animate-step-out-backward {
+  animation: stepSlideOutBackward 240ms cubic-bezier(0.4, 0, 1, 1) both;
+  will-change: transform, opacity;
+}
+
+/* ============================================================
+   4. FLUID INTRINSIC HEIGHT ACCORDION (CSS GRID 0fr -> 1fr)
+   ============================================================ */
+.accordion-grid-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.accordion-grid-wrapper[data-state="open"],
+.accordion-grid-wrapper.is-open {
+  grid-template-rows: 1fr;
+}
+
+.accordion-grid-content {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ============================================================
+   5. GPU-COMPOSITED 60/120 FPS POSITIONING UTILITIES
+   ============================================================ */
+.composited-layer {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
 /* ============================================================
    BOTTOM SHEET SPRING & GENTLE SETTLE MOTION
    ============================================================ */
-@keyframes sheetSpringUp {
+@keyframes sheetSlideUp {
   0% {
     transform: translateY(100%);
     opacity: 0.6;
-  }
-  52% {
-    transform: translateY(-16px);
-    opacity: 1;
-  }
-  74% {
-    transform: translateY(6px);
-  }
-  88% {
-    transform: translateY(-2px);
   }
   100% {
     transform: translateY(0);
@@ -160,19 +336,38 @@
   }
 }
 
-.animate-sheet-spring-bottom {
-  animation: sheetSpringUp 0.54s cubic-bezier(0.19, 1, 0.22, 1) both;
+.animate-sheet-slide-bottom {
+  animation: sheetSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* Accessibility: Respect user motion preferences */
 @media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
   .page-enter-animation,
+  .page-enter-animation [data-slot="card"],
+  .route-stagger > .route-card,
+  .route-stagger > [data-slot="card"],
   ::view-transition-old(root),
   ::view-transition-new(root),
   .hover-lift,
-  .animate-sheet-spring-bottom {
+  .hover-lift:active,
+  .animate-input-shake,
+  .animate-sheet-slide-bottom,
+  .animate-step-in-forward,
+  .animate-step-out-forward,
+  .animate-step-in-backward,
+  .animate-step-out-backward,
+  .accordion-grid-wrapper {
     animation: none !important;
     transition: none !important;
     transform: none !important;
+  }
+  .accordion-grid-wrapper[data-state="open"],
+  .accordion-grid-wrapper.is-open {
+    grid-template-rows: 1fr !important;
   }
 }

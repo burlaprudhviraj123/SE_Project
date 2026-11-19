@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -8,13 +9,13 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {
-    Bell,
     Globe,
     LayoutDashboard,
     LogOut,
     Menu,
     Moon,
     PlusCircle,
+    RefreshCw,
     ShieldAlert,
     Sun,
     User,
@@ -25,6 +26,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
 import { logout } from '../../store/authSlice';
+import { setThemeCleanly } from '../../lib/theme';
+import NotificationBell from '../NotificationBell';
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -49,7 +52,19 @@ const Navbar = () => {
     }
   }, [isDark]);
 
-  const toggleTheme = () => setIsDark(!isDark);
+  useEffect(() => {
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setIsMobileMenuOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, []);
+
+  const toggleTheme = () => {
+    const nextDark = !isDark;
+    setIsDark(nextDark);
+    setThemeCleanly(nextDark);
+  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -71,7 +86,7 @@ const Navbar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-[#E4E0D8]/80 dark:border-[#2A2E33]/80 bg-[#FAF9F6]/85 dark:bg-[#121517]/85 backdrop-blur-md transition-all duration-300">
+    <nav aria-label="Primary navigation" className="sticky top-0 z-50 w-full border-b border-[#E4E0D8]/80 dark:border-[#2A2E33]/80 bg-[#FAF9F6]/85 dark:bg-[#121517]/85 backdrop-blur-md transition-all duration-300">
       <div className="container flex h-16 max-w-7xl mx-auto items-center justify-between px-4 sm:px-6">
         {/* Left: Branding */}
         <div className="flex items-center gap-3 md:gap-8">
@@ -88,7 +103,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Nav Links */}
-          <div className="hidden xl:flex items-center gap-1.5 ml-4">
+          <div className="hidden lg:flex items-center gap-1.5 ml-4">
             {filteredLinks.map((link) => (
               <Link 
                 key={link.path} 
@@ -109,37 +124,53 @@ const Navbar = () => {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2 md:gap-3">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleTheme}
-            className="rounded-full text-muted-foreground hover:text-foreground hover:bg-[#E4E0D8]/50 dark:hover:bg-[#22262B] transition-colors h-9 w-9"
-          >
-            {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-[#2B5D4F]" />}
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                aria-label="Toggle theme"
+                className="rounded-full text-muted-foreground hover:text-foreground hover:bg-[#E4E0D8]/50 dark:hover:bg-[#22262B] transition-colors h-9 w-9"
+              >
+                {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-[#2B5D4F]" />}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              {isDark ? "Switch to light theme" : "Switch to dark theme"}
+            </TooltipContent>
+          </Tooltip>
 
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            title="System Synchronization"
-            className="relative rounded-full text-muted-foreground hover:text-foreground hover:bg-[#E4E0D8]/50 dark:hover:bg-[#22262B] transition-colors h-9 w-9"
-            onClick={() => {
-              if (window.location.pathname === '/dashboard') {
-                window.location.reload();
-              } else {
-                toast.info("System Sync", {
-                  description: "Dashboard state and credentials are up to date."
-                });
-              }
-            }}
-          >
-            <Bell className="h-4 w-4" />
-            <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-[#2B5D4F]" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Refresh current page"
+                className="relative rounded-full text-muted-foreground hover:text-foreground hover:bg-[#E4E0D8]/50 dark:hover:bg-[#22262B] transition-colors h-9 w-9"
+                onClick={() => {
+                  if (window.location.pathname === '/dashboard') {
+                    window.location.reload();
+                  } else {
+                    toast.info("Refreshing page", {
+                      description: "Fetching the latest available information."
+                    });
+                  }
+                }}
+              >
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              Refresh page
+            </TooltipContent>
+          </Tooltip>
+
+          <NotificationBell />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-9 w-9 md:h-10 md:w-10 rounded-full p-0 overflow-hidden border border-[#E4E0D8] dark:border-[#2A2E33] hover:border-[#2B5D4F]/50 transition-all focus-visible:outline-none">
+              <Button aria-label="Open account menu" variant="ghost" className="relative h-9 w-9 md:h-10 md:w-10 rounded-full p-0 overflow-hidden border border-[#E4E0D8] dark:border-[#2A2E33] hover:border-[#2B5D4F]/50 transition-all focus-visible:outline-none">
                 <div className="flex h-full w-full items-center justify-center bg-[#FAF9F6] dark:bg-[#1A1D20] text-[#2B5D4F] dark:text-[#7EB5A6] font-mono font-bold text-sm">
                   {user?.firstName?.charAt(0) || user?.username?.charAt(0)}
                 </div>
@@ -177,8 +208,11 @@ const Navbar = () => {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="xl:hidden rounded-full"
+            className="lg:hidden rounded-full"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-primary-navigation"
+            aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
           >
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
@@ -187,7 +221,7 @@ const Navbar = () => {
 
       {/* Mobile Nav Menu */}
       {isMobileMenuOpen && (
-        <div className="xl:hidden border-t border-[#E4E0D8] dark:border-[#2A2E33] bg-[#FAF9F6] dark:bg-[#121517] p-4 animate-in slide-in-from-top-4 duration-300">
+        <div id="mobile-primary-navigation" className="lg:hidden border-t border-[#E4E0D8] dark:border-[#2A2E33] bg-[#FAF9F6] dark:bg-[#121517] p-4 animate-in slide-in-from-top-4 duration-300 composited-layer will-change-transform">
           <div className="space-y-1.5">
             {filteredLinks.map((link) => (
               <Link 

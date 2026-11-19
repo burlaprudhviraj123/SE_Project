@@ -61,6 +61,7 @@ public class GrievanceService {
     private ModelMapper modelMapper;
     private GrievanceUpvoteRepository upvoteRepository;
     private GrievanceAccessPolicy accessPolicy;
+    private NotificationService notificationService;
     
     private static final Map<GrievanceStatus, Set<GrievanceStatus>> ALLOWED_TRANSITIONS = new HashMap<>();
     static {
@@ -111,6 +112,31 @@ public class GrievanceService {
         log.info("Grievance submitted: {} (Number: {})", savedGrievance.getId(), grievanceNumber);
 
         emailService.sendGrievanceSubmittedEmail(citizen.getEmail(), grievanceNumber);
+
+        if (notificationService != null) {
+            notificationService.sendNotification(
+                    citizen,
+                    "Grievance Lodged: #" + grievanceNumber,
+                    "Your grievance \"" + savedGrievance.getTitle() + "\" has been logged under " + department.getName() + " and routed for officer review.",
+                    "/grievances/" + savedGrievance.getId(),
+                    "GRIEVANCE_SUBMITTED"
+            );
+
+            try {
+                userRepository.findByRole(Role.ADMIN).forEach(adminUser -> {
+                    notificationService.sendNotification(
+                            adminUser,
+                            "New Grievance #" + grievanceNumber,
+                            "A new grievance was submitted to " + department.getName() + " by " + citizen.getFullName() + ".",
+                            "/admin/grievances",
+                            "GRIEVANCE_NEW"
+                    );
+                });
+            } catch (Exception ex) {
+                log.warn("Could not dispatch admin notifications: {}", ex.getMessage());
+            }
+        }
+
         return convertToResponse(savedGrievance);
     }
 
@@ -268,6 +294,17 @@ public class GrievanceService {
         emailService.sendStatusUpdateEmail(updatedGrievance.getCitizen().getEmail(),
                 updatedGrievance.getGrievanceNumber(), request.getStatus().toString());
 
+        if (notificationService != null && updatedGrievance.getCitizen() != null) {
+            String statusLabel = request.getStatus().name().replace('_', ' ');
+            notificationService.sendNotification(
+                    updatedGrievance.getCitizen(),
+                    "Status Updated: #" + updatedGrievance.getGrievanceNumber(),
+                    "Case #" + updatedGrievance.getGrievanceNumber() + " is now " + statusLabel + (remarks.isEmpty() ? "." : ": " + remarks),
+                    "/grievances/" + updatedGrievance.getId(),
+                    "STATUS_" + request.getStatus().name()
+            );
+        }
+
         return convertToResponse(updatedGrievance);
     }
 
@@ -316,6 +353,25 @@ public class GrievanceService {
 
         historyRepository.save(history);
         emailService.sendAssignmentEmail(officer.getEmail(), grievance.getGrievanceNumber());
+
+        if (notificationService != null) {
+            notificationService.sendNotification(
+                    officer,
+                    "Grievance Assigned: #" + grievance.getGrievanceNumber(),
+                    "You have been assigned to case #" + grievance.getGrievanceNumber() + " (" + grievance.getTitle() + ") by Administration.",
+                    "/grievances/" + grievance.getId(),
+                    "GRIEVANCE_ASSIGNED"
+            );
+            if (grievance.getCitizen() != null) {
+                notificationService.sendNotification(
+                        grievance.getCitizen(),
+                        "Officer Assigned: #" + grievance.getGrievanceNumber(),
+                        "Officer " + officer.getFullName() + " has been assigned to investigate your case.",
+                        "/grievances/" + grievance.getId(),
+                        "OFFICER_ASSIGNED"
+                );
+            }
+        }
 
         return convertToResponse(updatedGrievance);
     }
@@ -520,6 +576,15 @@ public void closeByUser(Long grievanceId, Long userId, String remarks) {
     try {
         historyRepository.save(history);
         log.info("Grievance {} successfully closed and history archived.", grievanceId);
+        if (notificationService != null && saved.getAssignedOfficer() != null) {
+            notificationService.sendNotification(
+                    saved.getAssignedOfficer(),
+                    "Case Closed by Student: #" + saved.getGrievanceNumber(),
+                    "Student " + citizen.getFullName() + " has closed grievance #" + saved.getGrievanceNumber() + ".",
+                    "/grievances/" + saved.getId(),
+                    "CLOSED_BY_USER"
+            );
+        }
     } catch (org.springframework.dao.OptimisticLockingFailureException | jakarta.persistence.OptimisticLockException ex) {
         throw ex;
     } catch (Exception e) {
@@ -574,6 +639,16 @@ public GrievanceResponse acceptGrievance(Long grievanceId, Long officerId) {
             .build();
     historyRepository.save(history);
 
+    if (notificationService != null && saved.getCitizen() != null) {
+        notificationService.sendNotification(
+                saved.getCitizen(),
+                "Case Under Redressal: #" + saved.getGrievanceNumber(),
+                "Officer " + officer.getFullName() + " has accepted case #" + saved.getGrievanceNumber() + " and initiated active investigation.",
+                "/grievances/" + saved.getId(),
+                "IN_PROGRESS"
+        );
+    }
+
     return convertToResponse(saved);
 }
 
@@ -620,6 +695,16 @@ public GrievanceResponse updatePriority(Long grievanceId, Priority priority) {
             .updatedByUser(requester)
             .build();
     historyRepository.save(history);
+
+    if (notificationService != null && saved.getCitizen() != null) {
+        notificationService.sendNotification(
+                saved.getCitizen(),
+                "Priority Updated: #" + saved.getGrievanceNumber(),
+                "Case #" + saved.getGrievanceNumber() + " priority was updated to " + priority + ".",
+                "/grievances/" + saved.getId(),
+                "PRIORITY_UPDATED"
+        );
+    }
 
     return convertToResponse(saved);
 }

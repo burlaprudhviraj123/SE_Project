@@ -81,7 +81,7 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative z-10 w-full max-w-lg my-auto max-h-[92vh] flex flex-col rounded-3xl border border-line bg-paper-light p-6 shadow-2xl transition-all duration-200",
+          "relative z-10 w-full max-w-lg my-auto max-h-[92vh] flex flex-col rounded-3xl border border-line bg-paper-light p-6 shadow-2xl composited-layer will-change-transform transition-[transform,opacity] duration-200 ease-out",
           className
         )}
         onClick={(e) => e.stopPropagation()}
@@ -91,7 +91,7 @@ const DialogContent = React.forwardRef(({ className, children, ...props }, ref) 
         <button
           type="button"
           onClick={() => context?.onOpenChange?.(false)}
-          className="absolute right-4 top-4 z-20 rounded-xl p-1.5 text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+          className="absolute right-4 top-4 z-20 rounded-xl p-1.5 text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10 active:scale-95 transition-all"
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>

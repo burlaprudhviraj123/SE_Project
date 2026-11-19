@@ -281,54 +281,56 @@ const OfficerDashboardPage = () => {
         </div>
 
         {/* Top Stat Cards (4 KPIs) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
           
           {/* KPI 1: Department Pool */}
-          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-xl p-5 shadow-sm">
-            <div className="flex items-center justify-between text-muted-foreground mb-3">
+          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 sm:p-7 shadow-sm space-y-2">
+            <div className="flex items-center justify-between text-muted-foreground mb-1">
               <span className="text-xs font-mono uppercase tracking-wider">Department Pool</span>
               <Inbox className="w-4 h-4 text-[#B8862E]" />
             </div>
             <div className="text-3xl font-mono font-bold text-[#1C2024] dark:text-[#FAF9F6]">
               <RollingNumber value={stats.deptUnassignedCount} />
             </div>
-            <p className="text-xs text-muted-foreground mt-1 font-sans">Unassigned tickets in department pool</p>
+            <p className="text-xs text-muted-foreground pt-1 font-sans">Unassigned tickets in department pool</p>
           </div>
 
           {/* KPI 2: My Active Tasks */}
-          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-xl p-5 shadow-sm">
-            <div className="flex items-center justify-between text-muted-foreground mb-3">
+          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 sm:p-7 shadow-sm space-y-2">
+            <div className="flex items-center justify-between text-muted-foreground mb-1">
               <span className="text-xs font-mono uppercase tracking-wider">My Active Tasks</span>
               <Clock className="w-4 h-4 text-[#2B5D4F]" />
             </div>
             <div className="text-3xl font-mono font-bold text-[#2B5D4F] dark:text-[#7EB5A6]">
               <RollingNumber value={stats.myActiveTasksCount} />
             </div>
-            <p className="text-xs text-muted-foreground mt-1 font-sans">Cases claimed under active investigation</p>
+            <p className="text-xs text-muted-foreground pt-1 font-sans">Cases claimed under active investigation</p>
           </div>
 
           {/* KPI 3: Resolved by Me */}
-          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-xl p-5 shadow-sm">
-            <div className="flex items-center justify-between text-muted-foreground mb-3">
+          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 sm:p-7 shadow-sm space-y-2">
+            <div className="flex items-center justify-between text-muted-foreground mb-1">
               <span className="text-xs font-mono uppercase tracking-wider">Resolved by Me</span>
               <CheckCircle2 className="w-4 h-4 text-[#3F6B4A]" />
             </div>
             <div className="text-3xl font-mono font-bold text-[#3F6B4A] dark:text-[#88C096]">
               <RollingNumber value={stats.myResolvedCount} />
             </div>
-            <p className="text-xs text-muted-foreground mt-1 font-sans">Closed & resolved cases</p>
+            <p className="text-xs text-muted-foreground pt-1 font-sans">Closed & resolved cases</p>
           </div>
 
           {/* KPI 4: SLA Warnings */}
-          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-xl p-5 shadow-sm">
-            <div className="flex items-center justify-between text-muted-foreground mb-3">
+          <div className="border border-[#E4E0D8] dark:border-[#2A2E33] bg-white dark:bg-[#1A1D20] rounded-2xl p-6 sm:p-7 shadow-sm hover:shadow-md hover:border-[#2B5D4F]/40 transition-all duration-300 space-y-2">
+            <div className="flex items-center justify-between text-muted-foreground mb-1">
               <span className="text-xs font-mono uppercase tracking-wider">SLA Warnings</span>
-              <Flame className="w-4 h-4 text-[#9B4A3F]" />
+              <div className="p-2 rounded-lg bg-[#2B5D4F]/10 text-[#2B5D4F] dark:text-[#7EB5A6]">
+                <Flame className="w-4 h-4" />
+              </div>
             </div>
-            <div className="text-3xl font-mono font-bold text-[#9B4A3F] dark:text-[#E07A6E]">
+            <div className="text-3xl font-mono font-bold text-[#2B5D4F] dark:text-[#7EB5A6]">
               <RollingNumber value={stats.slaBreachedCount} />
             </div>
-            <p className="text-xs text-muted-foreground mt-1 font-sans">Overdue / SLA threshold alerts</p>
+            <p className="text-xs text-muted-foreground pt-1 font-sans">Overdue / SLA threshold alerts</p>
           </div>
         </div>
 

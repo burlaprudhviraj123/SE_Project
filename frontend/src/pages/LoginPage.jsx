@@ -3,10 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginStart, loginSuccess, loginFailure } from '../store/authSlice';
 import { loginUser, forgotPassword, resetPassword } from '../lib/api';
+import { setThemeCleanly } from '../lib/theme';
+import { cleanEmail } from '../lib/validation';
 import { Button } from "@/components/ui/button";
 import { Input, FloatingInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { DirectionalStepper, DirectionalStep } from "@/components/ui/directional-stepper";
 import { AlertCircle, CheckCircle2, ShieldCheck, KeyRound, ArrowLeft, Lock, Moon, Sun, Eye, EyeOff } from "lucide-react";
 
 const LoginPage = () => {
@@ -19,6 +22,7 @@ const LoginPage = () => {
   // Forgot password state
   const [showForgot, setShowForgot] = useState(false);
   const [forgotStep, setForgotStep] = useState('EMAIL'); // 'EMAIL' | 'OTP'
+  const [forgotStepDirection, setForgotStepDirection] = useState('forward');
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotOtp, setForgotOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -38,13 +42,7 @@ const LoginPage = () => {
   const toggleTheme = () => {
     const nextDark = !isDark;
     setIsDark(nextDark);
-    if (nextDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
+    setThemeCleanly(nextDark);
   };
 
   const handleSubmit = async (e) => {
@@ -76,15 +74,17 @@ const LoginPage = () => {
     setForgotError('');
     setForgotMsg('');
 
-    if (!forgotEmail || !forgotEmail.includes('@')) {
+    const cleanedEmail = cleanEmail(forgotEmail);
+    if (!cleanedEmail || !cleanedEmail.includes('@')) {
       setForgotError('Please enter a valid college email address.');
       return;
     }
 
     setForgotLoading(true);
     try {
-      const res = await forgotPassword({ email: forgotEmail.trim().toLowerCase() });
+      const res = await forgotPassword({ email: cleanedEmail });
       setForgotMsg(res.data?.message || 'Password reset OTP dispatched.');
+      setForgotStepDirection('forward');
       setForgotStep('OTP');
     } catch (err) {
       const errMsg = err.response?.data?.message || err.response?.data || 'Failed to dispatch reset code.';
@@ -98,8 +98,9 @@ const LoginPage = () => {
     e.preventDefault();
     setForgotError('');
 
-    if (!forgotOtp || forgotOtp.trim().length !== 6) {
-      setForgotError('Please enter the 6-digit OTP.');
+    const cleanOtp = (forgotOtp || '').trim().replace(/\D/g, '');
+    if (cleanOtp.length !== 6) {
+      setForgotError('Please enter the 6-digit OTP code.');
       return;
     }
 
@@ -111,8 +112,8 @@ const LoginPage = () => {
     setForgotLoading(true);
     try {
       await resetPassword({
-        email: forgotEmail.trim().toLowerCase(),
-        otpCode: forgotOtp.trim(),
+        email: cleanEmail(forgotEmail),
+        otpCode: cleanOtp,
         newPassword
       });
       setForgotMsg('Password successfully updated! You can now sign in.');
@@ -169,6 +170,7 @@ const LoginPage = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 autoComplete="username"
+                error={Boolean(localError || error)}
                 required
               />
 
@@ -179,6 +181,7 @@ const LoginPage = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
+                error={Boolean(localError || error)}
                 required
                 endAdornment={
                   <div className="flex items-center gap-2">
@@ -216,106 +219,115 @@ const LoginPage = () => {
                 {loading ? "Signing in..." : "Sign In"}
               </Button>
             </form>
-          ) : forgotStep === 'EMAIL' ? (
-            <form onSubmit={handleForgotEmailSubmit} className="space-y-4">
-              <p className="text-xs text-ink-muted leading-relaxed">
-                Enter your registered ANITS email address. We will dispatch a 6-digit OTP code to verify your identity.
-              </p>
-
-              <FloatingInput
-                id="forgotEmail"
-                type="email"
-                label="ANITS College Email"
-                value={forgotEmail}
-                onChange={(e) => setForgotEmail(e.target.value)}
-                autoComplete="email"
-                required
-              />
-
-              {forgotError && (
-                <div className="p-3 rounded-xl bg-status-rejected/10 border border-status-rejected/20 flex items-center gap-2.5 text-status-rejected text-xs">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                  <p>{forgotError}</p>
-                </div>
-              )}
-
-              <Button
-                type="submit"
-                className="w-full h-11 rounded-xl text-xs font-semibold tracking-wide bg-accent hover:bg-[#234C40] text-white shadow-sm transition-all"
-                disabled={forgotLoading}
-              >
-                {forgotLoading ? "Sending OTP..." : "Send Reset Code"}
-              </Button>
-
-              <button
-                type="button"
-                onClick={() => { setShowForgot(false); setForgotError(''); }}
-                className="w-full flex items-center justify-center gap-1.5 text-xs text-ink-muted hover:text-ink pt-1"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" /> Back to Sign In
-              </button>
-            </form>
           ) : (
-            <form onSubmit={handleForgotOtpSubmit} className="space-y-4">
-              {forgotMsg && (
-                <div className="p-3 rounded-xl bg-accent-dim border border-accent/20 flex items-center gap-2.5 text-accent text-xs">
-                  <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-                  <p>{forgotMsg}</p>
-                </div>
-              )}
+            <DirectionalStepper currentStep={forgotStep} direction={forgotStepDirection}>
+              <DirectionalStep step="EMAIL">
+                <form onSubmit={handleForgotEmailSubmit} className="space-y-4">
+                  <p className="text-xs text-ink-muted leading-relaxed">
+                    Enter your registered ANITS email address. We will dispatch a 6-digit OTP code to verify your identity.
+                  </p>
 
-              <FloatingInput
-                id="forgotOtp"
-                type="text"
-                maxLength={6}
-                label="6-Digit Verification Code"
-                value={forgotOtp}
-                onChange={(e) => setForgotOtp(e.target.value.replace(/\D/g, ''))}
-                required
-              />
+                  <FloatingInput
+                    id="forgotEmail"
+                    type="email"
+                    label="ANITS College Email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    autoComplete="email"
+                    error={Boolean(forgotError)}
+                    required
+                  />
 
-              <FloatingInput
-                id="newPassword"
-                type={showNewPassword ? "text" : "password"}
-                label="New Password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-                endAdornment={
+                  {forgotError && (
+                    <div className="p-3 rounded-xl bg-status-rejected/10 border border-status-rejected/20 flex items-center gap-2.5 text-status-rejected text-xs">
+                      <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                      <p>{forgotError}</p>
+                    </div>
+                  )}
+
+                  <Button
+                    type="submit"
+                    className="w-full h-11 rounded-xl text-xs font-semibold tracking-wide bg-accent hover:bg-[#234C40] text-white shadow-sm transition-all"
+                    disabled={forgotLoading}
+                  >
+                    {forgotLoading ? "Sending OTP..." : "Send Reset Code"}
+                  </Button>
+
                   <button
                     type="button"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="p-1 text-muted-foreground hover:text-ink transition-colors"
-                    aria-label={showNewPassword ? "Hide password" : "Show password"}
+                    onClick={() => { setShowForgot(false); setForgotError(''); }}
+                    className="w-full flex items-center justify-center gap-1.5 text-xs text-ink-muted hover:text-ink pt-1"
                   >
-                    {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    <ArrowLeft className="w-3.5 h-3.5" /> Back to Sign In
                   </button>
-                }
-              />
+                </form>
+              </DirectionalStep>
 
-              {forgotError && (
-                <div className="p-3 rounded-xl bg-status-rejected/10 border border-status-rejected/20 flex items-center gap-2.5 text-status-rejected text-xs">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                  <p>{forgotError}</p>
-                </div>
-              )}
+              <DirectionalStep step="OTP">
+                <form onSubmit={handleForgotOtpSubmit} className="space-y-4">
+                  {forgotMsg && (
+                    <div className="p-3 rounded-xl bg-accent-dim border border-accent/20 flex items-center gap-2.5 text-accent text-xs">
+                      <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                      <p>{forgotMsg}</p>
+                    </div>
+                  )}
 
-              <Button
-                type="submit"
-                className="w-full h-11 rounded-xl text-xs font-semibold tracking-wide bg-accent hover:bg-[#234C40] text-white shadow-sm transition-all"
-                disabled={forgotLoading || forgotOtp.length !== 6}
-              >
-                {forgotLoading ? "Resetting..." : "Confirm & Update Password"}
-              </Button>
+                  <FloatingInput
+                    id="forgotOtp"
+                    type="text"
+                    maxLength={6}
+                    label="6-Digit Verification Code"
+                    value={forgotOtp}
+                    onChange={(e) => setForgotOtp(e.target.value.replace(/\D/g, ''))}
+                    error={Boolean(forgotError)}
+                    required
+                  />
 
-              <button
-                type="button"
-                onClick={() => { setForgotStep('EMAIL'); setForgotError(''); }}
-                className="w-full flex items-center justify-center gap-1.5 text-xs text-ink-muted hover:text-ink pt-1"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" /> Re-enter Email
-              </button>
-            </form>
+                  <FloatingInput
+                    id="newPassword"
+                    type={showNewPassword ? "text" : "password"}
+                    label="New Password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    error={Boolean(forgotError)}
+                    required
+                    endAdornment={
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        className="p-1 text-muted-foreground hover:text-ink transition-colors"
+                        aria-label={showNewPassword ? "Hide password" : "Show password"}
+                      >
+                        {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    }
+                  />
+
+                  {forgotError && (
+                    <div className="p-3 rounded-xl bg-status-rejected/10 border border-status-rejected/20 flex items-center gap-2.5 text-status-rejected text-xs">
+                      <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                      <p>{forgotError}</p>
+                    </div>
+                  )}
+
+                  <Button
+                    type="submit"
+                    className="w-full h-11 rounded-xl text-xs font-semibold tracking-wide bg-accent hover:bg-[#234C40] text-white shadow-sm transition-all"
+                    disabled={forgotLoading || forgotOtp.length !== 6}
+                  >
+                    {forgotLoading ? "Resetting..." : "Confirm & Update Password"}
+                  </Button>
+
+                  <button
+                    type="button"
+                    onClick={() => { setForgotStepDirection('backward'); setForgotStep('EMAIL'); setForgotError(''); }}
+                    className="w-full flex items-center justify-center gap-1.5 text-xs text-ink-muted hover:text-ink pt-1"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" /> Re-enter Email
+                  </button>
+                </form>
+              </DirectionalStep>
+            </DirectionalStepper>
           )}
         </CardContent>
 
