@@ -48,7 +48,7 @@ public class SecurityConfig {
         return new JwtAuthenticationFilter(tokenProvider, userDetailsService);
     }
 
-    @org.springframework.beans.factory.annotation.Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://localhost:3000,http://localhost:8081,http://localhost}")
+    @org.springframework.beans.factory.annotation.Value("${app.cors.allowed-origins:*}")
     private String allowedOrigins;
 
     // 🌐 CORS Configuration
@@ -59,7 +59,7 @@ public class SecurityConfig {
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .toList();
-        configuration.setAllowedOrigins(origins);
+        configuration.setAllowedOriginPatterns(origins.isEmpty() ? List.of("*") : origins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("Authorization", "Content-Disposition"));
